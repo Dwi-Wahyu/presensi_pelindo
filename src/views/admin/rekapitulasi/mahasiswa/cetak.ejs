@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>Presensi Pelindo</title>
+
+    <!-- Custom fonts for this template-->
+    <link
+      href="/src/assets/vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor Bootstrap  -->
+    <link rel="stylesheet" href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css" />
+
+    <!-- Custom styles for this template-->
+    <link href="/src/assets/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="/src/assets/css/template.css" rel="stylesheet" />
+
+    <style>
+      #content-to-print {
+        display: none;
+      }
+
+      @media print {
+        #wrapper {
+          display: none;
+        }
+
+        #content-to-print {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <%- include('../../../partials/sidebarAdmin', { link: 'rekap-magang', parent: 'rekapitulasi'})
+      %>
+      <!-- End of Sidebar -->
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          <%- include('../../../partials/topbar') %>
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800 judul-page">Cetak Rekapitulasi Mahasiswa Magang</h1>
+              <button class="btn btn-primary" id="cetak" onclick="cetak()">
+                <i class="fas fa-print mr-1"></i>
+                Cetak
+              </button>
+            </div>
+
+            <!-- Content Row -->
+            <div class="row">
+              <!-- Content Column -->
+              <div class="col-12 mb-4">
+                <!-- Project Card Example -->
+                <div class="card shadow mb-4">
+                  <div class="card-body">
+                    <h4 class="text-center">ABSENSI</h4>
+                    <h4 class="text-center"><%= nama_kampus %></h4>
+                    <h6>BULAN OKTOBER</h6>
+                    <table class="table table-bordered mt-1" id="cetak-table">
+                      <thead>
+                        <tr>
+                          <th rowspan="2" style="width: 1rem"></th>
+                          <th class="text-center" colspan="2"><%= nama %></th>
+                        </tr>
+                        <tr>
+                          <th class="text-center">MASUK</th>
+                          <th class="text-center">PULANG</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% for (const item of presensi) { %>
+                        <tr>
+                          <td class="text-center"><%= item.tanggal %></td>
+                          <% if (item.hari == "Sabtu" || item.hari == "Minggu") { %>
+                          <td colspan="2" class="text-center bg-gray-300"><%= item.hari %></td>
+                          <% } else { %>
+                          <td class="text-center"><%= item.waktu_datang %></td>
+                          <td class="text-center"><%= item.waktu_pulang %></td>
+                          <% } %>
+                        </tr>
+                        <% } %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; Your Website 2021</span>
+            </div>
+          </div>
+        </footer>
+        <!-- End of Footer -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <div id="content-to-print">
+      <h4 class="text-center">ABSENSI</h4>
+      <h4 class="text-center"><%= nama_kampus %></h4>
+      <h6>BULAN OKTOBER</h6>
+      <table class="table table-bordered mt-1" id="cetak-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width: 1rem"></th>
+            <th class="text-center" colspan="2"><%= nama %></th>
+          </tr>
+          <tr>
+            <th class="text-center">MASUK</th>
+            <th class="text-center">PULANG</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (const item of presensi) { %>
+          <tr>
+            <td class="text-center"><%= item.tanggal %></td>
+            <% if (item.hari == "Sabtu" || item.hari == "Minggu") { %>
+            <td colspan="2" class="text-center bg-gray-300"><%= item.hari %></td>
+            <% } else { %>
+            <td class="text-center"><%= item.waktu_datang %></td>
+            <td class="text-center"><%= item.waktu_pulang %></td>
+            <% } %>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Jquery -->
+    <script src="/src/assets/vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/src/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/src/assets/js/sb-admin-2.min.js"></script>
+
+    <script>
+      function cetak() {
+        window.print()
+      }
+    </script>
+  </body>
+</html>

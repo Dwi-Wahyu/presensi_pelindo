@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.wrapper {
+  width: 100%;
+  height: 100vh;
+  background: url("/public/bg-login.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.card {
+  padding: 1.5rem;
+  background: white;
+  width: 27rem;
+  margin-left: 5rem;
+  border-radius: 1rem !important;
+}
+
+@media screen and (max-width: 500px) {
+  .card {
+    width: 100%;
+    height: 100vh;
+    border-radius: 0 !important;
+    margin-left: 0;
+  }
+}

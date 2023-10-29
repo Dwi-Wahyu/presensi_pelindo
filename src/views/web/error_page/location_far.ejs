@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRESENSI PELINDO</title>
+
+    <link rel="stylesheet" href="/src/assets/css/absen.css" />
+    <link rel="stylesheet" href="/src/assets/css/alert-absen.css" />
+    <link rel="stylesheet" href="/src/assets/vendor/fontawesome-free/css/all.css" />
+  </head>
+  <body>
+    <div class="alert-wrapper" id="location-wrapper">
+      <div class="alert-container">
+        <h1 class="alert-title">Failed to Input Attendance</h1>
+        <img src="/src/assets/images/location_far.png" alt="" />
+        <h3 class="alert-subtitle">Your location is too far from the office</h3>
+        <button class="location-btn" onclick="location.href = '/location'">SHOW LOCATION</button>
+        <button class="back-btn" onclick="history.back()">BACK</button>
+      </div>
+    </div>
+  </body>
+</html>

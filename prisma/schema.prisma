@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model pkl {
+  nomor         Int            @id @default(autoincrement())
+  id            String         @unique @default(uuid())
+  nama          String         @unique @db.VarChar(500)
+  jenis_kelamin String         @db.VarChar(100)
+  kode_unik     Int
+  sekolah       sekolah?       @relation(fields: [nama_sekolah], references: [nama])
+  nama_sekolah  String?
+  presensi      presensi_pkl[]
+}
+
+model presensi_pkl {
+  id           String  @id @default(uuid())
+  pkl          pkl?    @relation(fields: [nama_siswa], references: [nama])
+  nama_siswa   String?
+  waktu_datang String
+  waktu_pulang String
+  tanggal      String
+  status       String
+}
+
+model sekolah {
+  id        String @id @default(uuid())
+  nama      String @unique
+  siswa_pkl pkl[]
+}
+
+model magang {
+  nomor         Int               @id @default(autoincrement())
+  id            String            @unique @default(uuid())
+  nama          String            @unique
+  jenis_kelamin String
+  kode_unik     Int
+  kampus        kampus?           @relation(fields: [nama_kampus], references: [nama])
+  nama_kampus   String?
+  presensi      presensi_magang[]
+}
+
+model kampus {
+  id               String   @id @default(uuid())
+  nama             String   @unique
+  mahasiswa_magang magang[]
+}
+
+model presensi_magang {
+  id             String  @id @default(uuid())
+  magang         magang? @relation(fields: [nama_mahasiswa], references: [nama])
+  nama_mahasiswa String?
+  waktu_datang   String
+  waktu_pulang   String
+  tanggal        String
+  status         String
+}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>Presensi Pelindo</title>
+
+    <!-- Custom fonts for this template-->
+    <link
+      href="/src/assets/vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor Bootstrap  -->
+    <link rel="stylesheet" href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css" />
+
+    <!-- Custom styles for this template-->
+    <link href="/src/assets/css/sb-admin-2.min.css" rel="stylesheet" />
+  </head>
+
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <%- include('../../partials/sidebarAdmin', { link: 'edit', parent: 'siswa'}) %>
+      <!-- End of Sidebar -->
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          <%- include('../../partials/topbar') %>
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800">Form Edit Siswa PKL</h1>
+            </div>
+
+            <!-- Content Row -->
+            <div class="row">
+              <!-- Content Column -->
+              <div class="col-12 mb-4">
+                <!-- Project Card Example -->
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Form Edit</h6>
+                  </div>
+                  <div class="card-body">
+                    <div
+                      id="duplikasi-alert"
+                      class="alert alert-warning alert-dismissible fade show d-none"
+                      role="alert"
+                    >
+                      <i class="fa fa-exclamation mr-1"></i>
+                      Nama siswa terduplikasi
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div
+                      id="success-alert"
+                      class="alert alert-success alert-dismissible fade show d-none"
+                      role="alert"
+                    >
+                      <i class="fa fa-check-circle mr-1"></i>
+                      Berhasil update siswa
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <form id="form">
+                      <div class="mb-3">
+                        <label for="nama" class="form-label">Nama Siswa</label>
+                        <div class="input-group">
+                          <input
+                            type="text"
+                            id="nama"
+                            class="form-control"
+                            value="<%= siswa.nama %>"
+                            required
+                          />
+                          <div class="input-group-append">
+                            <span class="input-group-text">
+                              <i class="bi bi-person-circle"></i>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label for="asal-sekolah" class="form-label">Asal Sekolah</label>
+                        <select id="asal-sekolah" class="form-control" required>
+                          <option value="" disabled selected>-- Pilih Sekolah --</option>
+                          <% for (const item of sekolah) { %>
+                          <option value="<%= item.nama %>"><%= item.nama %></option>
+                          <% } %>
+                        </select>
+                      </div>
+                      <div class="mb-4">
+                        <label for="jenis-kelamin" class="form-label">Jenis Kelamin</label>
+                        <select id="jenis-kelamin" class="form-control" required>
+                          <option value="laki laki">Laki Laki</option>
+                          <option value="perempuan">Perempuan</option>
+                        </select>
+                      </div>
+                      <div class="d-flex justify-content-end">
+                        <a href="/admin/siswa/daftar" class="btn btn-primary btn-icon-split mr-2">
+                          <span class="icon text-white-50">
+                            <i class="fas fa-arrow-left"></i>
+                          </span>
+                          <span class="text">Kembali</span>
+                        </a>
+                        <button type="submit" class="btn btn-success btn-icon-split">
+                          <span class="icon text-white-50">
+                            <i class="fas fa-plus"></i>
+                          </span>
+                          <span class="text">Submit</span>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; Your Website 2021</span>
+            </div>
+          </div>
+        </footer>
+        <!-- End of Footer -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/src/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/src/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/src/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/src/assets/js/sb-admin-2.min.js"></script>
+
+    <script>
+      $("#asal-sekolah").val("<%= siswa.nama_sekolah %>")
+      $("#jenis-kelamin").val("<%= siswa.jenis_kelamin %>")
+
+      $("#form").on("submit", (e) => {
+        e.preventDefault()
+
+        const nama = $("#nama").val()
+        const nama_sekolah = $("#asal-sekolah").val()
+        const jenis_kelamin = $("#jenis-kelamin").val()
+
+        const data = { nama, nama_sekolah, jenis_kelamin }
+
+        $("#success-alert").addClass("d-none")
+        $("#duplikasi-alert").addClass("d-none")
+
+        fetch("/admin/siswa/<%= siswa.id %>", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }).then((result) => {
+          if (!result.ok) {
+            $("#duplikasi-alert").removeClass("d-none")
+          } else {
+            $("#success-alert").removeClass("d-none")
+          }
+        })
+      })
+    </script>
+  </body>
+</html>

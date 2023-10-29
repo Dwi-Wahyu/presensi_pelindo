@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRESENSI PELINDO</title>
+
+    <link rel="stylesheet" href="/src/assets/css/absen.css" />
+    <link rel="stylesheet" href="/src/assets/css/alert-absen.css" />
+    <link rel="stylesheet" href="/src/assets/vendor/fontawesome-free/css/all.css" />
+  </head>
+  <body>
+    <div class="wrapper" id="absen-wrapper">
+      <div class="box">
+        <img src="/public/logo-pelindo.png" alt="" id="logo" />
+        <h1 class="title">ABSENSI PKL/MAGANG</h1>
+        <form id="form-absen">
+          <div class="form-wrap">
+            <label for="code" id="code-label">Insert your personal code</label>
+            <div class="input-group">
+              <i class="fa fa-user"></i>
+              <input type="number" id="code" required placeholder="PERSONAL CODE" />
+            </div>
+          </div>
+          <div class="form-action">
+            <button type="submit">SUBMIT</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="alert-wrapper d-none" id="success-wrapper">
+      <div class="alert-container">
+        <img src="/public/success-logo.png" alt="" id="success-logo" />
+        <h1 class="alert-title">SUCCESS !</h1>
+        <h3 class="alert-subtitle">Your presence has been submitted</h3>
+        <button class="ok-btn" onclick="backAbsen()">OK</button>
+      </div>
+    </div>
+
+    <script src="/src/assets/vendor/jquery/jquery.min.js"></script>
+
+    <script src="/src/assets/js/absen.js"></script>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRESENSI PELINDO</title>
+
+    <link rel="stylesheet" href="/src/assets/css/absen.css" />
+    <link rel="stylesheet" href="/src/assets/css/alert-absen.css" />
+    <link rel="stylesheet" href="/src/assets/vendor/fontawesome-free/css/all.css" />
+  </head>
+  <body>
+    <div class="alert-wrapper" id="location-wrapper">
+      <div class="alert-container">
+        <h1 class="alert-title">ENABLE YOUR LOCATION</h1>
+        <img src="/public/warning-location.png" alt="" />
+        <h3 class="alert-subtitle">Attendance cannot be accessed if locations is disabled</h3>
+        <button class="location-btn" onclick="askForPermission()">TURN ON LOCATION</button>
+        <button class="back-btn" onclick="history.back()">BACK</button>
+      </div>
+    </div>
+
+    <script>
+      function permissionGranted(position) {
+        history.back()
+      }
+
+      function permissionRefused(err) {
+        alert("Diblokir secara otomatis")
+      }
+
+      function askForPermission() {
+        navigator.geolocation.getCurrentPosition(permissionGranted, permissionRefused)
+      }
+    </script>
+  </body>
+</html>

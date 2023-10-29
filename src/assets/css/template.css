@@ -1,0 +1,13 @@
+#cetak-table thead th {
+  border-color: black !important;
+  border-bottom-width: 1px !important;
+}
+
+#cetak-table td {
+  border-color: black !important;
+}
+
+#cetak-table td,
+th {
+  padding: 0.5rem 0.75rem !important;
+}
