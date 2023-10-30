@@ -26,6 +26,10 @@ pagesRouter.get("/location", (req, res) => {
   res.render("web/location")
 })
 
+pagesRouter.get("/success", (req, res) => {
+  res.render("web/success-page")
+})
+
 pagesRouter.post("/login", (req, res) => {
   const { username, password } = req.body
 

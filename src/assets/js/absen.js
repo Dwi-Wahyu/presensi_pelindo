@@ -22,8 +22,6 @@ $("#form-absen").on("submit", (e) => {
       .then((data) => {
         const { text, value } = data.rows[0].elements[0].distance
 
-        alert(text)
-
         fetch("/api/absen", {
           method: "POST",
           headers: {
@@ -38,8 +36,7 @@ $("#form-absen").on("submit", (e) => {
               location.href = "/wrong-code"
             }
           } else {
-            $("#absen-wrapper").addClass("d-none")
-            $("#success-wrapper").removeClass("d-none")
+            location.href = "/success"
           }
         })
 

@@ -18,7 +18,7 @@ function dbConnect() {
   pool.connect((err) => {
     if (err) throw err
 
-    log("Terhubung ke database")
+    // log("Terhubung ke database")
   })
 }
 
