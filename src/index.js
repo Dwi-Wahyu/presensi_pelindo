@@ -1,6 +1,4 @@
 const express = require("express")
-const https = require("https")
-const fs = require("fs")
 const cors = require("cors")
 const session = require("express-session")
 const connectPgSimple = require("connect-pg-simple")
@@ -54,17 +52,6 @@ app.use(
 // Routes
 app.use(routes)
 
-const httpsCredentials = {
-  key: fs.readFileSync(path.join(__dirname, "/certificate/key.pem")),
-  cert: fs.readFileSync(path.join(__dirname, "/certificate/cert.pem")),
-}
-
-const httpsServer = https.createServer(httpsCredentials, app)
-
-httpsServer.listen(3000, () => {
-  log("https://localhost:3000")
+app.listen(3000, () => {
+  log("http://localhost:3000")
 })
-
-// app.listen(3000, () => {
-//   log("http://localhost:3000")
-// })
