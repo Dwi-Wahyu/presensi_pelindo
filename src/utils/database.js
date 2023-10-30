@@ -13,6 +13,8 @@ const pool = new Pool({
 })
 
 function dbConnect() {
+  const empat_menit = 240000
+
   pool.connect((err) => {
     if (err) throw err
 

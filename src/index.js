@@ -17,6 +17,12 @@ const app = express()
 
 dbConnect()
 
+setInterval(async () => {
+  const version = await pool.query("SELECT VERSION()")
+
+  log(version.rows)
+}, 240000)
+
 // Static file configuration
 app.use("/src", express.static("src"))
 app.use("/public", express.static(path.join(process.cwd(), "public")))
