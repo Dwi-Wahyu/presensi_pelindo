@@ -9,6 +9,8 @@ const { dbConnect, pool } = require("./utils/database")
 
 const routes = require("./router/routes")
 
+const port = process.env.PORT || 3000
+
 const pgStore = connectPgSimple(session)
 
 const app = express()
@@ -52,6 +54,6 @@ app.use(
 // Routes
 app.use(routes)
 
-app.listen(3000, () => {
-  log("http://localhost:3000")
+app.listen(port, () => {
+  log("http://localhost:" + port)
 })
