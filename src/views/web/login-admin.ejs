@@ -12,17 +12,42 @@
     <div class="wrapper">
       <div></div>
       <div class="card">
-        <h1>Login Admin Presensi</h1>
-        <form id="form" class="mt-3">
+        <div class="mb-4">
+          <h1 class="title">Login</h1>
+        </div>
+
+        <div>
+          <h3 class="subtitle text-gray-600 mb-1">Selamat datang</h3>
+          <h3 class="subtitle text-gray-600">Halaman login admin presensi pkl/magang</h3>
+        </div>
+
+        <form id="form" class="mt-4">
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
-            <input type="text" name="" id="username" class="form-control" required />
+            <input
+              type="text"
+              name=""
+              id="username"
+              class="form-control"
+              placeholder="Username"
+              required
+            />
           </div>
-          <div class="mb-3">
+          <div class="mb-4">
             <label for="password" class="form-label">Password</label>
-            <input type="password" name="" id="password" class="form-control" required />
+            <input
+              type="password"
+              name=""
+              id="password"
+              class="form-control"
+              placeholder="Password"
+              required
+            />
           </div>
-          <button class="btn btn-primary w-100">LOGIN</button>
+          <button type="submit">
+            <img id="loader" src="/public/loader/circle-white.svg" class="d-none" alt="" />
+            Login
+          </button>
         </form>
       </div>
     </div>
@@ -32,6 +57,8 @@
     <script>
       $("#form").on("submit", (e) => {
         e.preventDefault()
+
+        $("#loader").removeClass("d-none")
 
         const username = $("#username").val()
         const password = $("#password").val()
@@ -52,6 +79,8 @@
           } else {
             location.href = "/admin"
           }
+
+          $("#loader").addClass("d-none")
         })
       })
     </script>

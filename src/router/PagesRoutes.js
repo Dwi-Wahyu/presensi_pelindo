@@ -22,12 +22,20 @@ pagesRouter.get("/location-far", (req, res) => {
   res.render("web/error_page/location_far")
 })
 
+pagesRouter.get("/already-attended", (req, res) => {
+  res.render("web/error_page/already-attended")
+})
+
 pagesRouter.get("/location", (req, res) => {
   res.render("web/location")
 })
 
 pagesRouter.get("/success", (req, res) => {
   res.render("web/success-page")
+})
+
+pagesRouter.get("/izin", (req, res) => {
+  res.render("web/izin")
 })
 
 pagesRouter.post("/login", (req, res) => {

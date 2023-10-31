@@ -26,6 +26,7 @@ setInterval(async () => {
 // Static file configuration
 app.use("/src", express.static("src"))
 app.use("/public", express.static(path.join(process.cwd(), "public")))
+app.use("/node_modules", express.static("node_modules"))
 
 // Middlewares
 app.use(bodyParser.json())

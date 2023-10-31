@@ -16,13 +16,13 @@
         <img src="/public/warning-location.png" alt="" />
         <h3 class="alert-subtitle">Attendance cannot be accessed if locations is disabled</h3>
         <button class="location-btn" onclick="askForPermission()">TURN ON LOCATION</button>
-        <button class="back-btn" onclick="history.back()">BACK</button>
+        <button class="back-btn" onclick="location.href='/'">BACK</button>
       </div>
     </div>
 
     <script>
       function permissionGranted(position) {
-        history.back()
+        location.href = "/"
       }
 
       function permissionRefused(err) {

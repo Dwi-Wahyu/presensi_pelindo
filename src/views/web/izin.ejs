@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRESENSI PELINDO</title>
+
+    <link rel="stylesheet" href="/src/assets/css/absen.css" />
+    <link rel="stylesheet" href="/src/assets/vendor/fontawesome-free/css/all.css" />
+    <link rel="stylesheet" href="/src/assets/css/sb-admin-2.min.css" />
+    <link rel="stylesheet" href="/src/assets/css/loader.css" />
+    <link rel="stylesheet" href="/node_modules/toastify-js/src/toastify.css" />
+  </head>
+  <body>
+    <div class="wrapper" id="absen-wrapper">
+      <div class="d-none" id="popup-loading">
+        <img src="/public/loader/bar.svg" alt="" />
+      </div>
+      <div>
+        <h1 class="title">FORM PENGAJUAN IZIN</h1>
+        <form>
+          <div class="mb-3">
+            <label for="personal-code" class="form-label">Personal Code</label>
+            <input type="text" id="personal-code" class="form-control" />
+          </div>
+          <div class="mb-3">
+            <label for="tanggal" class="form-label">Tanggal</label>
+            <input type="date" id="tanggal" class="form-control" />
+          </div>
+          <div class="mb-3">
+            <label for="keterangan" class="form-label">Keterangan</label>
+            <textarea class="form-control" id="keterangan"></textarea>
+          </div>
+          <div class="mb-5">
+            <label for="status" class="form-label">Status izin</label>
+            <select id="status" class="form-control">
+              <option disabled selected value="">-- Pilih Status --</option>
+              <option value="datang">Datang</option>
+              <option value="pulang">Pulang</option>
+              <option value="seharian">Seharian</option>
+            </select>
+          </div>
+          <div class="d-flex justify-content-center">
+            <button id="submitbtn" class="btn btn-primary btn-icon-split">
+              <span class="icon text-white-50">
+                <i id="btn-icon" class="fas fa-plus"></i>
+                <img
+                  class="d-none"
+                  id="circle-loader"
+                  src="/public/loader/circle-white.svg"
+                  alt=""
+                />
+              </span>
+              <span class="text">SUBMIT</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="/src/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/node_modules/toastify-js/src/toastify.js"></script>
+
+    <script>
+      $("form").on("submit", async (e) => {
+        e.preventDefault()
+
+        $("#btn-icon").addClass("d-none")
+        $("#circle-loader").removeClass("d-none")
+
+        const url = "/api/izin"
+
+        const code = $("#personal-code").val()
+        const tanggal = $("#tanggal").val()
+        const keterangan = $("#keterangan").val()
+        const status = $("#status").val()
+
+        const data = { code, tanggal, keterangan, status }
+
+        console.log(data)
+
+        const fetchIzin = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+
+        if (fetchIzin.ok) {
+          Toastify({
+            text: "Berhasil input pengajuan",
+            className: "info",
+            style: {
+              background: "linear-gradient(to right, #4262BE, #7192f5)",
+            },
+          }).showToast()
+        } else {
+          const errorFetch = await fetchIzin.json()
+          const { message } = errorFetch
+
+          if (message == "You already made permission for one day") {
+            Toastify({
+              text: "Anda telah membuat pengajuan izin seharian pada tanggal tersebut",
+              className: "info",
+              style: {
+                background: "linear-gradient(to right, #4262BE, #7192f5)",
+              },
+            }).showToast()
+          }
+
+          console.log(errorFetch)
+        }
+
+        $("#btn-icon").removeClass("d-none")
+        $("#circle-loader").addClass("d-none")
+      })
+    </script>
+  </body>
+</html>

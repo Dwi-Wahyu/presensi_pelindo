@@ -61,3 +61,11 @@ model presensi_magang {
   tanggal        String
   status         String
 }
+
+model perizinan {
+  id         String @id @default(uuid())
+  kode_unik  Int
+  tanggal    String
+  keterangan String
+  status     String
+}

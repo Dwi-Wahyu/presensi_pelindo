@@ -1,7 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+:root {
+  --biru: rgb(6, 75, 130);
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+.title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  margin: 0;
+  color: var(--biru);
+}
+
+.subtitle {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  margin: 0;
 }
 
 .wrapper {
@@ -15,11 +35,36 @@
   justify-content: space-around;
 }
 
+#form button {
+  background: var(--biru);
+  width: 100%;
+  padding: 0.8rem 0;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#form button img {
+  width: 1.3rem;
+  margin-right: 0.4rem;
+}
+
+label,
+input {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+}
+
 .card {
   padding: 1.5rem;
   background: white;
-  width: 27rem;
-  margin-left: 5rem;
+  width: 32rem;
+  margin-left: 32rem;
   border-radius: 1rem !important;
 }
 
