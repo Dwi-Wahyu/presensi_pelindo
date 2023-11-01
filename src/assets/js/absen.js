@@ -28,32 +28,55 @@ async function permissionGranted(position) {
 
     const { text, value } = dataDistance.rows[0].elements[0].distance
 
-    if (value > 300) {
-      location.href = "/location-far"
+    const absenUrl = "/api/absen"
+
+    const fetchAbsen = await fetch(absenUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code }),
+    })
+
+    if (fetchAbsen.ok) {
+      location.href = "/success"
     } else {
-      const absenUrl = "/api/absen"
+      const absenError = await fetchAbsen.json()
+      const { message } = absenError
 
-      const fetchAbsen = await fetch(absenUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code }),
-      })
-
-      if (fetchAbsen.ok) {
-        location.href = "/success"
+      if (message == "Wrong Personal Code") {
+        location.href = "/wrong-code"
       } else {
-        const absenError = await fetchAbsen.json()
-        const { message } = absenError
-
-        if (message == "Wrong Personal Code") {
-          location.href = "/wrong-code"
-        } else {
-          location.href = "/already-attended"
-        }
+        location.href = "/already-attended"
       }
     }
+
+    // if (value > 300) {
+    //   location.href = "/location-far"
+    // } else {
+    //   const absenUrl = "/api/absen"
+
+    //   const fetchAbsen = await fetch(absenUrl, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ code }),
+    //   })
+
+    //   if (fetchAbsen.ok) {
+    //     location.href = "/success"
+    //   } else {
+    //     const absenError = await fetchAbsen.json()
+    //     const { message } = absenError
+
+    //     if (message == "Wrong Personal Code") {
+    //       location.href = "/wrong-code"
+    //     } else {
+    //       location.href = "/already-attended"
+    //     }
+    //   }
+    // }
   } catch (err) {
     console.log(err)
   }

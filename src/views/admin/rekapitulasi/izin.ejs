@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>Presensi Pelindo</title>
+
+    <!-- Custom fonts for this template-->
+    <link
+      href="/src/assets/vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+
+    <!-- Datatable -->
+    <link rel="stylesheet" href="/src/assets/vendor/datatable/bootstrap.css" />
+    <link rel="stylesheet" href="/src/assets/vendor/datatable/dataTables.bootstrap4.min.css" />
+
+    <!-- Vendor Bootstrap  -->
+    <link rel="stylesheet" href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css" />
+
+    <!-- Custom styles for this template-->
+    <link href="/src/assets/css/sb-admin-2.min.css" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <%- include('../../partials/sidebarAdmin', { link: 'izin', parent: 'rekapitulasi'}) %>
+      <!-- End of Sidebar -->
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          <%- include('../../partials/topbar') %>
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800">Rekapitulasi Siswa PKL</h1>
+            </div>
+
+            <!-- Content Row -->
+            <div class="row">
+              <!-- Content Column -->
+              <div class="col-12 mb-4">
+                <!-- Project Card Example -->
+                <div class="card shadow mb-4">
+                  <div class="card-body">
+                    <div class="row mb-3">
+                      <div class="col">
+                        <label for="filter-tanggal">Filter Tanggal</label>
+                        <input type="date" name="" id="filter-tanggal" class="form-control" />
+                      </div>
+                    </div>
+                    <table
+                      id="example"
+                      class="table table-striped table-bordered"
+                      style="width: 100%"
+                    >
+                      <thead>
+                        <tr>
+                          <th>Nama</th>
+                          <th>Tanggal</th>
+                          <th>Keterangan</th>
+                          <th>Status Izin</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; Your Website 2021</span>
+            </div>
+          </div>
+        </footer>
+        <!-- End of Footer -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Datatable -->
+    <script src="/src/assets/vendor/datatable/jquery-3.7.0.js"></script>
+    <script src="/src/assets/vendor/datatable/jquery.dataTables.min.js"></script>
+    <script src="/src/assets/vendor/datatable/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/src/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/src/assets/js/sb-admin-2.min.js"></script>
+
+    <script>
+      var alreadyDraw = false
+
+      const table = $("#example").DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+          url: "/admin/rekapitulasi/izin/data",
+          type: "GET",
+        },
+        columns: [
+          { data: "nama", title: "Nama" },
+          { data: "tanggal", title: "Tanggal" },
+          { data: "keterangan", title: "Keterangan" },
+          { data: "waktu_izin", title: "Waktu Izin" },
+          {
+            data: "id",
+            title: "Action",
+            render: function (data, row, type) {
+              return `
+                <button class='btn btn-success approvebtn'>
+                  <i class="bi bi-check"></i>
+                  Approve
+                </button>
+      
+                <button class='btn btn-danger tolakbtn'>
+                  <i class="bi bi-x"></i>
+                  Tolak
+                </button>
+              `
+            },
+          },
+        ],
+      })
+
+      $("#example tbody").on("click", ".approvebtn", function () {
+        var row = table.row($(this).closest("tr"))
+
+        const { id, nama, tanggal, status, kode_unik } = row.data()
+
+        const data = { id, nama, tanggal, status, kode_unik }
+
+        fetch(`/admin/rekapitulasi/izin/approve`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }).then((result) => {
+          row.draw()
+        })
+      })
+
+      $("#example tbody").on("click", ".tolakbtn", function () {
+        var row = table.row($(this).closest("tr"))
+
+        const { id } = row.data()
+
+        fetch(`/admin/rekapitulasi/izin/tolak`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id }),
+        }).then((result) => {
+          row.draw()
+        })
+      })
+
+      const sekarang = new Date()
+      const tahun = sekarang.getFullYear()
+      const bulan = sekarang.getMonth() + 1
+      const tanggal = sekarang.getDate()
+
+      const stringBulan = bulan.toString().padStart(2, "0")
+      const stringTanggal = tanggal.toString().padStart(2, "0")
+
+      const formattedDate = `${tahun}-${stringBulan}-${stringTanggal}`
+
+      $(document).ready(function () {
+        $("#filter-tanggal").val(formattedDate)
+
+        const tanggal = $("#filter-tanggal").val()
+
+        table.search(tanggal).draw()
+      })
+
+      $("#filter-tanggal").on("change", function () {
+        const tanggal = $(this).val()
+
+        table.search(tanggal).draw()
+      })
+    </script>
+  </body>
+</html>

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PRESENSI PELINDO</title>
 
+    <link rel="icon" href="/public/pelindo.png" />
+
     <link rel="stylesheet" href="/src/assets/css/absen.css" />
     <link rel="stylesheet" href="/src/assets/vendor/fontawesome-free/css/all.css" />
     <link rel="stylesheet" href="/src/assets/css/sb-admin-2.min.css" />
@@ -32,11 +34,11 @@
             <textarea class="form-control" id="keterangan"></textarea>
           </div>
           <div class="mb-5">
-            <label for="status" class="form-label">Status izin</label>
-            <select id="status" class="form-control">
-              <option disabled selected value="">-- Pilih Status --</option>
-              <option value="datang">Datang</option>
-              <option value="pulang">Pulang</option>
+            <label for="waktu_izin" class="form-label">Waktu izin</label>
+            <select id="waktu_izin" class="form-control">
+              <option disabled selected value="">-- Pilih Waktu --</option>
+              <option value="datang">Absen Datang</option>
+              <option value="pulang">Absen Pulang</option>
               <option value="seharian">Seharian</option>
             </select>
           </div>
@@ -73,9 +75,9 @@
         const code = $("#personal-code").val()
         const tanggal = $("#tanggal").val()
         const keterangan = $("#keterangan").val()
-        const status = $("#status").val()
+        const waktu_izin = $("#waktu_izin").val()
 
-        const data = { code, tanggal, keterangan, status }
+        const data = { code, tanggal, keterangan, waktu_izin }
 
         console.log(data)
 
@@ -99,15 +101,13 @@
           const errorFetch = await fetchIzin.json()
           const { message } = errorFetch
 
-          if (message == "You already made permission for one day") {
-            Toastify({
-              text: "Anda telah membuat pengajuan izin seharian pada tanggal tersebut",
-              className: "info",
-              style: {
-                background: "linear-gradient(to right, #4262BE, #7192f5)",
-              },
-            }).showToast()
-          }
+          Toastify({
+            text: message,
+            className: "info",
+            style: {
+              background: "linear-gradient(to right, #4262BE, #7192f5)",
+            },
+          }).showToast()
 
           console.log(errorFetch)
         }

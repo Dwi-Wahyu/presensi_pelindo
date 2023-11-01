@@ -1,3 +1,5 @@
+require("moment-timezone")
+
 const { PrismaClient } = require("@prisma/client")
 const moment = require("moment")
 const prisma = new PrismaClient()
@@ -40,8 +42,12 @@ apiController.presensi = async (req, res) => {
   async function pklHandler(pkl, req, res) {
     let { nama: nama_siswa } = pkl
 
-    const waktu = moment().format("HH:mm")
-    const tanggal = moment().format("YYYY-MM-DD")
+    const sekarang = moment()
+
+    sekarang.tz("Asia/Makassar")
+
+    const waktu = sekarang.format("HH:mm")
+    const tanggal = sekarang.format("YYYY-MM-DD")
 
     const presensi_pkl = await prisma.presensi_pkl.findFirst({
       where: {
@@ -91,8 +97,12 @@ apiController.presensi = async (req, res) => {
   async function magangHandler(magang, req, res) {
     let { nama: nama_mahasiswa } = magang
 
-    const waktu = moment().format("HH:mm")
-    const tanggal = moment().format("YYYY-MM-DD")
+    const sekarang = moment()
+
+    sekarang.tz("Asia/Makassar")
+
+    const waktu = sekarang.format("HH:mm")
+    const tanggal = sekarang.format("YYYY-MM-DD")
 
     const presensi_magang = await prisma.presensi_magang.findFirst({
       where: {
@@ -141,7 +151,8 @@ apiController.presensi = async (req, res) => {
 }
 
 apiController.izin = async (req, res) => {
-  const { tanggal, keterangan, status, code } = req.body
+  const { tanggal, keterangan, waktu_izin, code } = req.body
+  var nama
 
   const kode_unik = parseInt(code)
 
@@ -158,6 +169,16 @@ apiController.izin = async (req, res) => {
   })
 
   if (pkl || magang) {
+    // Jika merupakan siswa pkl cari nama dari model pkl
+    if (pkl) {
+      nama = pkl.nama
+    }
+
+    // Jika merupakan mahasiswa magang cari nama dari model magang
+    if (magang) {
+      nama = magang.nama
+    }
+
     const cekIzin = await prisma.perizinan.findFirst({
       where: {
         kode_unik,
@@ -165,56 +186,76 @@ apiController.izin = async (req, res) => {
       },
     })
 
+    // Jika sudah terdapat izin
     if (cekIzin) {
-      const izinSeharian = cekIzin.status == "seharian"
-      const izinDatang = cekIzin.status == "datang"
-      const izinPulang = cekIzin.status == "pulang"
+      const izinSeharian = cekIzin.waktu_izin == "seharian"
+      const izinDatang = cekIzin.waktu_izin == "datang"
+      const izinPulang = cekIzin.waktu_izin == "pulang"
 
-      console.log(izinSeharian, izinDatang, izinPulang)
-
-      // Todo: Buat perkondisian jika sudah terdapat izin datang dan menambahkan izin pulang gabungkan kedua izin tersebut jadi 1 izin seharian
-
+      // Jika telah membuat izin selama satu hari
       if (izinSeharian) {
         res.status(400).json({ message: "You already made permission for one day" })
       }
 
-      if (!izinSeharian && !izinDatang && !izinPulang) {
-        buatPerizinan()
-      }
-
+      // Jika terdapat izin datang
       if (!izinSeharian && !izinPulang && izinDatang) {
-        if (status == "datang") {
+        if (waktu_izin == "datang") {
           res.status(400).json({
             message: "You already made permission for arrive attendance",
           })
         } else {
-          buatPerizinan()
+          // Jika ingin membuat izin pulang dan sudah terdapat izin datang
+          // Maka Hapus izin datang dan buat izin seharian
+
+          const { id } = cekIzin
+          await prisma.perizinan.delete({
+            where: {
+              id,
+            },
+          })
+
+          buatPerizinan("seharian")
         }
       }
 
+      // Jika terdapat izin pulang
       if (!izinSeharian && !izinDatang && izinPulang) {
-        if (status == "pulang") {
+        if (waktu_izin == "pulang") {
           res.status(400).json({
             message: "You already made permission for leaving attendance",
           })
         } else {
-          buatPerizinan()
+          // Jika ingin membuat izin datang dan sudah terdapat izin pulang
+          // Maka Hapus izin pulang dan buat izin seharian
+
+          const { id } = cekIzin
+          await prisma.perizinan.delete({
+            where: {
+              id,
+            },
+          })
+
+          buatPerizinan("seharian")
         }
       }
-    } else {
-      buatPerizinan()
     }
 
-    async function buatPerizinan() {
+    // Jika belum ada izin
+    if (!cekIzin) {
+      buatPerizinan(waktu_izin)
+    }
+
+    async function buatPerizinan(waktu_izin) {
       const perizinan = await prisma.perizinan.create({
         data: {
+          nama,
           kode_unik,
           tanggal,
           keterangan,
-          status,
+          waktu_izin,
+          status: "Belum approve",
         },
       })
-      console.log(perizinan)
 
       res.status(200).end()
     }

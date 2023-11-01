@@ -188,6 +188,23 @@
   </li>
   <% } %>
 
+  <!-- perizinan link -->
+  <% if (link == 'izin' && parent == 'rekapitulasi') { %>
+  <li class="nav-item active">
+    <a class="nav-link" href="/admin/rekapitulasi/izin">
+      <i class="fas fa-fw fa-envelope"></i>
+      <span>Izin</span>
+    </a>
+  </li>
+  <% } else { %>
+  <li class="nav-item">
+    <a class="nav-link" href="/admin/rekapitulasi/izin">
+      <i class="fas fa-fw fa-envelope"></i>
+      <span>Izin</span>
+    </a>
+  </li>
+  <% } %>
+
   <!-- Divider -->
   <hr class="sidebar-divider" />
 
