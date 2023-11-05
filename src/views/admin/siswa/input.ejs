@@ -3,7 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <meta name="description" content="" />
     <meta name="author" content="" />
 
@@ -23,7 +26,10 @@
     />
 
     <!-- Vendor Bootstrap  -->
-    <link rel="stylesheet" href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css" />
+    <link
+      rel="stylesheet"
+      href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css"
+    />
 
     <!-- Custom styles for this template-->
     <link href="/src/assets/css/sb-admin-2.min.css" rel="stylesheet" />
@@ -33,7 +39,8 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-      <%- include('../../partials/sidebarAdmin', { link: 'input', parent: 'siswa'}) %>
+      <%- include('../../partials/sidebarAdmin', { link: 'input', parent:
+      'siswa'}) %>
       <!-- End of Sidebar -->
 
       <!-- Content Wrapper -->
@@ -47,7 +54,9 @@
           <!-- Begin Page Content -->
           <div class="container-fluid">
             <!-- Page Heading -->
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
               <h1 class="h3 mb-0 text-gray-800">Input Siswa PKL</h1>
             </div>
 
@@ -58,7 +67,9 @@
                 <!-- Project Card Example -->
                 <div class="card shadow mb-4">
                   <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Form Input</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Form Input
+                    </h6>
                   </div>
                   <div class="card-body">
                     <div
@@ -68,7 +79,12 @@
                     >
                       <i class="fa fa-exclamation mr-1"></i>
                       Nama siswa terduplikasi
-                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <button
+                        type="button"
+                        class="close"
+                        data-dismiss="alert"
+                        aria-label="Close"
+                      >
                         <span aria-hidden="true">&times;</span>
                       </button>
                     </div>
@@ -79,7 +95,12 @@
                     >
                       <i class="fa fa-check-circle mr-1"></i>
                       Berhasil input siswa
-                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <button
+                        type="button"
+                        class="close"
+                        data-dismiss="alert"
+                        aria-label="Close"
+                      >
                         <span aria-hidden="true">&times;</span>
                       </button>
                     </div>
@@ -87,7 +108,12 @@
                       <div class="mb-3">
                         <label for="nama" class="form-label">Nama Siswa</label>
                         <div class="input-group">
-                          <input type="text" id="nama" class="form-control" required />
+                          <input
+                            type="text"
+                            id="nama"
+                            class="form-control"
+                            required
+                          />
                           <div class="input-group-append">
                             <span class="input-group-text">
                               <i class="bi bi-person-circle"></i>
@@ -96,25 +122,48 @@
                         </div>
                       </div>
                       <div class="mb-3">
-                        <label for="asal-sekolah" class="form-label">Asal Sekolah</label>
+                        <label for="asal-sekolah" class="form-label"
+                          >Asal Sekolah</label
+                        >
                         <select id="asal-sekolah" class="form-control" required>
-                          <option value="" disabled selected>-- Pilih Sekolah --</option>
+                          <option value="" disabled selected>
+                            -- Pilih Sekolah --
+                          </option>
                           <% for (const item of sekolah) { %>
-                          <option value="<%= item.nama %>"><%= item.nama %></option>
+                          <option value="<%= item.nama %>">
+                            <%= item.nama %>
+                          </option>
                           <% } %>
                         </select>
                       </div>
                       <div class="mb-4">
-                        <label for="jenis-kelamin" class="form-label">Jenis Kelamin</label>
-                        <select id="jenis-kelamin" class="form-control" required>
+                        <label for="jenis-kelamin" class="form-label"
+                          >Jenis Kelamin</label
+                        >
+                        <select
+                          id="jenis-kelamin"
+                          class="form-control"
+                          required
+                        >
                           <option value="laki laki">Laki Laki</option>
                           <option value="perempuan">Perempuan</option>
                         </select>
                       </div>
                       <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-success btn-icon-split">
+                        <button
+                          type="submit"
+                          class="btn btn-success btn-icon-split"
+                        >
                           <span class="icon text-white-50">
-                            <i class="fas fa-plus"></i>
+                            <i class="fas fa-plus" id="plus-icon"></i>
+                            <img
+                              src="/public/loader/circle-white.svg"
+                              alt=""
+                              class="d-none"
+                              id="loader"
+                              srcset=""
+                              width="21rem"
+                            />
                           </span>
                           <span class="text">Submit</span>
                         </button>
@@ -163,12 +212,17 @@
         e.preventDefault()
 
         const nama = $("#nama").val()
-        const namaSekolah = $("#asal-sekolah").val()
+        const namaAsal = $("#asal-sekolah").val()
         const jenis_kelamin = $("#jenis-kelamin").val()
+        const status = "pkl"
 
-        const data = { nama, namaSekolah, jenis_kelamin }
+        const data = { nama, namaAsal, jenis_kelamin, status }
 
+        $("#loader").removeClass("d-none")
+
+        $("#duplikasi-alert").addClass("d-none")
         $("#success-alert").addClass("d-none")
+        $("#plus-icon").addClass("d-none")
 
         fetch("/admin/siswa", {
           method: "POST",
@@ -177,11 +231,19 @@
           },
           body: JSON.stringify(data),
         }).then((result) => {
-          if (result.status === 200) {
+          if (result.ok) {
             $("#success-alert").removeClass("d-none")
 
             $("#nama").val("")
             $("#asal-sekolah").val("")
+
+            $("#loader").addClass("d-none")
+            $("#plus-icon").removeClass("d-none")
+          } else {
+            $("#loader").addClass("d-none")
+            $("#plus-icon").removeClass("d-none")
+
+            $("#duplikasi-alert").removeClass("d-none")
           }
         })
       })

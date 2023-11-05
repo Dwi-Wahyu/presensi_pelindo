@@ -195,7 +195,7 @@
           <form id="modal-form-edit">
             <div class="modal-body">
               <div
-                id="duplikasi-alert"
+                id="edit-duplikasi-alert"
                 class="alert alert-warning alert-dismissible fade show d-none"
                 role="alert"
               >
@@ -343,8 +343,7 @@
 
         const nama = $("#edit-nama-sekolah").val()
 
-        $("#duplikasi-alert").addClass("d-none")
-        $("#success-alert").addClass("d-none")
+        $("#edit-duplikasi-alert").addClass("d-none")
 
         const data = {
           id: sekolahDipilih,
@@ -359,7 +358,7 @@
           },
         }).then((result) => {
           if (!result.ok) {
-            $("#duplikasi-alert").removeClass("d-none")
+            $("#edit-duplikasi-alert").removeClass("d-none")
           } else {
             location.reload()
           }
@@ -389,9 +388,7 @@
             "Content-Type": "application/json",
           },
         }).then((result) => {
-          if (result.ok) {
-            location.reload()
-          }
+          location.reload()
         })
       })
     </script>

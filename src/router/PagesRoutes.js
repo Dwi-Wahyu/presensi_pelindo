@@ -26,6 +26,11 @@ pagesRouter.get("/already-attended", (req, res) => {
   res.render("web/error_page/already-attended")
 })
 
+pagesRouter.get("/wait/:waktuAbsen", (req, res) => {
+  const { waktuAbsen } = req.params
+  res.render("web/error_page/wait", { waktuAbsen })
+})
+
 pagesRouter.get("/location", (req, res) => {
   res.render("web/location")
 })
@@ -66,10 +71,10 @@ pagesRouter.post("/login", (req, res) => {
 })
 
 pagesRouter.get("/logout", (req, res) => {
+  res.redirect("/login")
+
   req.session.destroy((err) => {
     if (err) throw err
-
-    res.redirect = "/login"
   })
 })
 

@@ -9,7 +9,10 @@
 
     <link rel="stylesheet" href="/src/assets/css/absen.css" />
     <link rel="stylesheet" href="/src/assets/css/alert-absen.css" />
-    <link rel="stylesheet" href="/src/assets/vendor/fontawesome-free/css/all.css" />
+    <link
+      rel="stylesheet"
+      href="/src/assets/vendor/fontawesome-free/css/all.css"
+    />
   </head>
   <body>
     <div class="wrapper" id="absen-wrapper">
@@ -24,11 +27,25 @@
             <label for="code" id="code-label">Insert your personal code</label>
             <div class="input-group">
               <i class="fa fa-user"></i>
-              <input type="number" id="code" required placeholder="PERSONAL CODE" />
+              <input
+                type="number"
+                id="code"
+                required
+                placeholder="PERSONAL CODE"
+              />
             </div>
           </div>
           <div class="form-action">
-            <button type="submit">SUBMIT</button>
+            <button type="submit">
+              <img
+                src="/public/loader/circle-white.svg"
+                alt=""
+                width="20rem"
+                id="loader"
+                class="d-none"
+              />
+              SUBMIT
+            </button>
             <a id="izin-btn" href="/izin">Ajukan Izin</a>
           </div>
         </form>

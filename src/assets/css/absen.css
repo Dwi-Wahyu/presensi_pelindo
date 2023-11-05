@@ -91,7 +91,10 @@
   transition: 0.3s ease;
   cursor: pointer;
   font-family: "Montserrat", sans-serif;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   box-shadow: 0 2px 10px 0 rgba(4, 117, 188, 0.75);
   -webkit-box-shadow: 0 2px 10px 0 rgba(4, 117, 188, 0.75);
   -moz-box-shadow: 0 2px 10px 0 rgba(4, 117, 188, 0.75);

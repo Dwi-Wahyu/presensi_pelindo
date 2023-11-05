@@ -8,6 +8,7 @@ const { log } = require("console")
 const { dbConnect, pool } = require("./utils/database")
 
 const routes = require("./router/routes")
+const redisClient = require("./utils/redis")
 
 const port = process.env.PORT || 3000
 
@@ -15,13 +16,9 @@ const pgStore = connectPgSimple(session)
 
 const app = express()
 
+// Connect to utils
 dbConnect()
-
-setInterval(async () => {
-  const version = await pool.query("SELECT VERSION()")
-
-  log(version.rows)
-}, 240000)
+redisClient.connect()
 
 // Static file configuration
 app.use("/src", express.static("src"))

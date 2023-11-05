@@ -1,10 +1,20 @@
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul
+  class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+  id="accordionSidebar"
+>
   <!-- Sidebar - Brand -->
-  <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-    <div class="sidebar-brand-icon rotate-n-15">
-      <i class="fas fa-laugh-wink"></i>
+  <a
+    class="sidebar-brand d-flex align-items-center justify-content-center"
+    href="/admin"
+  >
+    <div class="sidebar-brand-icon">
+      <!-- <i class="fas fa-laugh-wink"></i> -->
+      <img src="/public/icon-putih.png" alt="" srcset="" width="33rem" />
     </div>
-    <div class="sidebar-brand-text mx-3">PRESENSI</div>
+    <div class="sidebar-brand-text mx-2">
+      PRESENSI <br />
+      PKL/MAGANG
+    </div>
   </a>
 
   <!-- Divider -->
@@ -54,11 +64,15 @@
     >
       <div class="bg-white py-2 collapse-inner rounded">
         <% if (link == 'input') { %>
-        <a class="collapse-item active" href="/admin/siswa/input">Input Siswa</a>
+        <a class="collapse-item active" href="/admin/siswa/input"
+          >Input Siswa</a
+        >
         <a class="collapse-item" href="/admin/siswa/daftar">Daftar Siswa</a>
         <% } else { %>
         <a class="collapse-item" href="/admin/siswa/input">Input Siswa</a>
-        <a class="collapse-item active" href="/admin/siswa/daftar">Daftar Siswa</a>
+        <a class="collapse-item active" href="/admin/siswa/daftar"
+          >Daftar Siswa</a
+        >
         <% } %>
       </div>
     </div>
@@ -112,11 +126,19 @@
     >
       <div class="bg-white py-2 collapse-inner rounded">
         <% if (link == 'input') { %>
-        <a class="collapse-item active" href="/admin/mahasiswa/input">Input Mahasiswa </a>
-        <a class="collapse-item" href="/admin/mahasiswa/daftar">Daftar Mahasiswa </a>
+        <a class="collapse-item active" href="/admin/mahasiswa/input"
+          >Input Mahasiswa
+        </a>
+        <a class="collapse-item" href="/admin/mahasiswa/daftar"
+          >Daftar Mahasiswa
+        </a>
         <% } else { %>
-        <a class="collapse-item" href="/admin/mahasiswa/input">Input Mahasiswa </a>
-        <a class="collapse-item active" href="/admin/mahasiswa/daftar">Daftar Mahasiswa </a>
+        <a class="collapse-item" href="/admin/mahasiswa/input"
+          >Input Mahasiswa
+        </a>
+        <a class="collapse-item active" href="/admin/mahasiswa/daftar"
+          >Daftar Mahasiswa
+        </a>
         <% } %>
       </div>
     </div>
@@ -141,8 +163,12 @@
       data-parent="#accordionSidebar"
     >
       <div class="bg-white py-2 collapse-inner rounded">
-        <a class="collapse-item" href="/admin/mahasiswa/input">Input Mahasiswa </a>
-        <a class="collapse-item" href="/admin/mahasiswa/daftar">Daftar Mahasiswa </a>
+        <a class="collapse-item" href="/admin/mahasiswa/input"
+          >Input Mahasiswa
+        </a>
+        <a class="collapse-item" href="/admin/mahasiswa/daftar"
+          >Daftar Mahasiswa
+        </a>
       </div>
     </div>
   </li>

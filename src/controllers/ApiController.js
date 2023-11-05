@@ -11,249 +11,80 @@ apiController.presensi = async (req, res) => {
 
   const kode_unik = parseInt(code)
 
-  const pkl = await prisma.pkl.findFirst({
+  const sekarang = moment()
+  sekarang.tz("Asia/Makassar")
+
+  const tanggal = sekarang.format("YYYY-MM-DD")
+  const waktu = sekarang.format("HH:mm")
+
+  const pengguna = await prisma.pengguna.findFirst({
     where: {
       kode_unik,
     },
   })
 
-  // Jika terdapat siswa pkl dengan kode unik tersebut
-  if (pkl) {
-    pklHandler(pkl, req, res)
-  }
-
-  const magang = await prisma.magang.findFirst({
-    where: {
-      kode_unik,
-    },
-  })
-
-  // Jika terdapat mahasiswa magang dengan kode unik tersebut
-  if (magang) {
-    magangHandler(magang, req, res)
-  }
-
-  // Jika tidak ada siswa pkl dan mahasiswa magang dengan kode unik tersebut
-  if (!pkl && !magang) {
+  if (!pengguna) {
     res.status(401).json({ message: "Wrong Personal Code" })
   }
 
-  // Function Handler untuk presensi pkl
-  async function pklHandler(pkl, req, res) {
-    let { nama: nama_siswa } = pkl
-
-    const sekarang = moment()
-
-    sekarang.tz("Asia/Makassar")
-
-    const waktu = sekarang.format("HH:mm")
-    const tanggal = sekarang.format("YYYY-MM-DD")
-
-    const presensi_pkl = await prisma.presensi_pkl.findFirst({
-      where: {
-        nama_siswa,
-        tanggal,
-      },
-    })
-
-    // Jika belum terdapat presensi hari ini dengan nama siswa tersebut
-    if (!presensi_pkl) {
-      await prisma.presensi_pkl.create({
-        data: {
-          nama_siswa,
-          waktu_datang: waktu,
-          waktu_pulang: "-",
-          tanggal,
-          status: "Tidak hadir",
-        },
-      })
-
-      res.status(200).json({ message: "Success input attendance" })
-    }
-
-    // Jika sudah terdapat presensi dan status tidak hadir
-    if (presensi_pkl && presensi_pkl.status == "Tidak hadir") {
-      let { id } = presensi_pkl
-
-      await prisma.presensi_pkl.update({
-        where: {
-          id,
-        },
-        data: {
-          waktu_pulang: waktu,
-          status: "Hadir",
-        },
-      })
-
-      res.status(200).json({ message: "Success input attendance" })
-    }
-
-    // Jika sudah terdapat presensi dan status telah hadir
-    if (presensi_pkl && presensi_pkl.status == "Hadir") {
-      res.status(401).json({ message: "You have been attend two times today" })
-    }
-  }
-
-  async function magangHandler(magang, req, res) {
-    let { nama: nama_mahasiswa } = magang
-
-    const sekarang = moment()
-
-    sekarang.tz("Asia/Makassar")
-
-    const waktu = sekarang.format("HH:mm")
-    const tanggal = sekarang.format("YYYY-MM-DD")
-
-    const presensi_magang = await prisma.presensi_magang.findFirst({
-      where: {
-        nama_mahasiswa,
-        tanggal,
-      },
-    })
-
-    // Jika belum terdapat presensi hari ini dengan nama siswa tersebut
-    if (!presensi_magang) {
-      await prisma.presensi_magang.create({
-        data: {
-          nama_mahasiswa,
-          waktu_datang: waktu,
-          waktu_pulang: "-",
-          tanggal,
-          status: "Tidak hadir",
-        },
-      })
-
-      res.status(200).json({ message: "Success input attendance" })
-    }
-
-    // Jika sudah terdapat presensi dan status tidak hadir
-    if (presensi_magang && presensi_magang.status == "Tidak hadir") {
-      let { id } = presensi_magang
-
-      await prisma.presensi_magang.update({
-        where: {
-          id,
-        },
-        data: {
-          waktu_pulang: waktu,
-          status: "Hadir",
-        },
-      })
-
-      res.status(200).json({ message: "Success input attendance" })
-    }
-
-    // Jika sudah terdapat presensi dan status telah hadir
-    if (presensi_magang && presensi_magang.status == "Hadir") {
-      res.status(401).json({ message: "You have been attend two times today" })
-    }
-  }
-}
-
-apiController.izin = async (req, res) => {
-  const { tanggal, keterangan, waktu_izin, code } = req.body
-  var nama
-
-  const kode_unik = parseInt(code)
-
-  const pkl = await prisma.pkl.findFirst({
+  const adaIzin = await prisma.perizinan.findFirst({
     where: {
       kode_unik,
+      tanggal,
+      status: "Approve",
     },
   })
 
-  const magang = await prisma.magang.findFirst({
+  const cekAbsen = await prisma.rekapitulasi.findFirst({
     where: {
-      kode_unik,
+      pengguna,
+      tanggal,
     },
   })
 
-  if (pkl || magang) {
-    // Jika merupakan siswa pkl cari nama dari model pkl
-    if (pkl) {
-      nama = pkl.nama
-    }
+  if (pengguna && !adaIzin && !cekAbsen) {
+    const { nama, status } = pengguna
 
-    // Jika merupakan mahasiswa magang cari nama dari model magang
-    if (magang) {
-      nama = magang.nama
-    }
-
-    const cekIzin = await prisma.perizinan.findFirst({
-      where: {
-        kode_unik,
+    await prisma.rekapitulasi.create({
+      data: {
+        namaPengguna: nama,
+        waktu_datang: waktu,
+        waktu_pulang: "-",
         tanggal,
+        status: status,
+        kehadiran: "Tidak hadir",
       },
     })
 
-    // Jika sudah terdapat izin
-    if (cekIzin) {
-      const izinSeharian = cekIzin.waktu_izin == "seharian"
-      const izinDatang = cekIzin.waktu_izin == "datang"
-      const izinPulang = cekIzin.waktu_izin == "pulang"
+    res.status(200).end()
+  }
 
-      // Jika telah membuat izin selama satu hari
-      if (izinSeharian) {
-        res.status(400).json({ message: "You already made permission for one day" })
-      }
+  if (pengguna && !adaIzin && cekAbsen) {
+    const hadir = cekAbsen.kehadiran == "Hadir"
+    const waktu_datang = moment(cekAbsen.waktu_datang, "HH:mm")
 
-      // Jika terdapat izin datang
-      if (!izinSeharian && !izinPulang && izinDatang) {
-        if (waktu_izin == "datang") {
-          res.status(400).json({
-            message: "You already made permission for arrive attendance",
-          })
-        } else {
-          // Jika ingin membuat izin pulang dan sudah terdapat izin datang
-          // Maka Hapus izin datang dan buat izin seharian
+    const waktuAbsen = waktu_datang.add(240, "minute").format("HH:mm")
 
-          const { id } = cekIzin
-          await prisma.perizinan.delete({
-            where: {
-              id,
-            },
-          })
+    const durasi = sekarang.diff(waktu_datang, "minute")
 
-          buatPerizinan("seharian")
-        }
-      }
+    const durasiCukup = durasi > 240
 
-      // Jika terdapat izin pulang
-      if (!izinSeharian && !izinDatang && izinPulang) {
-        if (waktu_izin == "pulang") {
-          res.status(400).json({
-            message: "You already made permission for leaving attendance",
-          })
-        } else {
-          // Jika ingin membuat izin datang dan sudah terdapat izin pulang
-          // Maka Hapus izin pulang dan buat izin seharian
-
-          const { id } = cekIzin
-          await prisma.perizinan.delete({
-            where: {
-              id,
-            },
-          })
-
-          buatPerizinan("seharian")
-        }
-      }
+    if (hadir) {
+      res.status(400).json({ message: "You have been attend two times today" })
     }
 
-    // Jika belum ada izin
-    if (!cekIzin) {
-      buatPerizinan(waktu_izin)
+    if (!durasiCukup) {
+      res.status(400).json({ message: "Please wait several time", waktuAbsen })
     }
 
-    async function buatPerizinan(waktu_izin) {
-      const perizinan = await prisma.perizinan.create({
+    if (!hadir && durasiCukup) {
+      await prisma.rekapitulasi.update({
+        where: {
+          id: cekAbsen.id,
+        },
         data: {
-          nama,
-          kode_unik,
-          tanggal,
-          keterangan,
-          waktu_izin,
-          status: "Belum approve",
+          waktu_pulang: waktu,
+          kehadiran: "Hadir",
         },
       })
 
@@ -261,8 +92,140 @@ apiController.izin = async (req, res) => {
     }
   }
 
-  if (!pkl && !magang) {
+  if (pengguna && adaIzin && !cekAbsen) {
+    const { nama, status } = pengguna
+
+    const izinSeharian = adaIzin.waktu_izin == "seharian"
+    const izinDatang = adaIzin.waktu_izin == "datang"
+    const izinPulang = adaIzin.waktu_izin == "pulang"
+
+    if (izinSeharian) {
+      res.status(400).json({ message: "You have applied for a one-day permit" })
+    }
+
+    if (izinDatang) {
+      await prisma.rekapitulasi.create({
+        data: {
+          namaPengguna: nama,
+          waktu_datang: "Izin",
+          waktu_pulang: waktu,
+          tanggal,
+          status,
+          kehadiran: "Hadir",
+        },
+      })
+
+      res.status(200).end()
+
+      await prisma.perizinan.delete({
+        where: {
+          id: adaIzin.id,
+        },
+      })
+    }
+
+    if (izinPulang) {
+      await prisma.rekapitulasi.create({
+        data: {
+          namaPengguna: nama,
+          waktu_datang: waktu,
+          waktu_pulang: "Izin",
+          tanggal,
+          status,
+          kehadiran: "Hadir",
+        },
+      })
+
+      res.status(200).end()
+
+      await prisma.perizinan.delete({
+        where: {
+          id: adaIzin.id,
+        },
+      })
+    }
+  }
+}
+
+apiController.izin = async (req, res) => {
+  const { tanggal, keterangan, waktu_izin, code } = req.body
+
+  const kode_unik = parseInt(code)
+
+  const pengguna = await prisma.pengguna.findFirst({
+    where: {
+      kode_unik,
+    },
+  })
+
+  if (!pengguna) {
     res.status(401).json({ error: "Wrong Personal Code" })
+  }
+
+  const cekIzin = await prisma.perizinan.findFirst({
+    where: {
+      tanggal,
+      kode_unik,
+    },
+  })
+
+  if (pengguna && !cekIzin) {
+    const { nama } = pengguna
+
+    await prisma.perizinan.create({
+      data: {
+        nama,
+        kode_unik,
+        status: "Belum approve",
+        tanggal,
+        keterangan,
+        waktu_izin,
+      },
+    })
+
+    res.status(200).end()
+  }
+
+  if (pengguna && cekIzin) {
+    const sudah_izin_seharian = cekIzin.waktu_izin == "seharian"
+    const sudah_izin_datang = cekIzin.waktu_izin == "datang"
+    const sudah_izin_pulang = cekIzin.waktu_izin == "pulang"
+
+    const { id } = cekIzin
+
+    if (sudah_izin_seharian) {
+      res
+        .status(400)
+        .json({ message: "Anda telah mengajukan izin untuk satu hari" })
+    }
+
+    if (sudah_izin_datang && waktu_izin == "datang") {
+      res
+        .status(400)
+        .json({ message: "Anda telah mengajukan izin absen masuk" })
+    }
+
+    if (sudah_izin_pulang && waktu_izin == "pulang") {
+      res
+        .status(400)
+        .json({ message: "Anda telah mengajukan izin absen pulang" })
+    }
+
+    if (
+      (sudah_izin_datang && waktu_izin == "pulang") ||
+      (sudah_izin_pulang && waktu_izin == "datang")
+    ) {
+      await prisma.perizinan.update({
+        where: {
+          id,
+        },
+        data: {
+          waktu_izin: "seharian",
+        },
+      })
+
+      res.status(200).end()
+    }
   }
 }
 

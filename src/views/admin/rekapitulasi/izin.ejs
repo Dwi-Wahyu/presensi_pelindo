@@ -7,7 +7,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>Presensi Pelindo</title>
+    <title>PRESENSI PELINDO</title>
 
     <!-- Custom fonts for this template-->
     <link
@@ -49,7 +49,7 @@
           <div class="container-fluid">
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-              <h1 class="h3 mb-0 text-gray-800">Rekapitulasi Siswa PKL</h1>
+              <h1 class="h3 mb-0 text-gray-800">Daftar Pengajuan Izin</h1>
             </div>
 
             <!-- Content Row -->
@@ -158,9 +158,9 @@
       $("#example tbody").on("click", ".approvebtn", function () {
         var row = table.row($(this).closest("tr"))
 
-        const { id, nama, tanggal, status, kode_unik } = row.data()
+        const { id, nama, tanggal, waktu_izin } = row.data()
 
-        const data = { id, nama, tanggal, status, kode_unik }
+        const data = { id, nama, tanggal, waktu_izin }
 
         fetch(`/admin/rekapitulasi/izin/approve`, {
           method: "POST",
@@ -168,8 +168,13 @@
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
-        }).then((result) => {
-          row.draw()
+        }).then(async (result) => {
+          if (result.ok) {
+            row.draw()
+          } else {
+            const error = await result.json()
+            console.log(error)
+          }
         })
       })
 
@@ -189,23 +194,23 @@
         })
       })
 
-      const sekarang = new Date()
-      const tahun = sekarang.getFullYear()
-      const bulan = sekarang.getMonth() + 1
-      const tanggal = sekarang.getDate()
+      // const sekarang = new Date()
+      // const tahun = sekarang.getFullYear()
+      // const bulan = sekarang.getMonth() + 1
+      // const tanggal = sekarang.getDate()
 
-      const stringBulan = bulan.toString().padStart(2, "0")
-      const stringTanggal = tanggal.toString().padStart(2, "0")
+      // const stringBulan = bulan.toString().padStart(2, "0")
+      // const stringTanggal = tanggal.toString().padStart(2, "0")
 
-      const formattedDate = `${tahun}-${stringBulan}-${stringTanggal}`
+      // const formattedDate = `${tahun}-${stringBulan}-${stringTanggal}`
 
-      $(document).ready(function () {
-        $("#filter-tanggal").val(formattedDate)
+      // $(document).ready(function () {
+      //   $("#filter-tanggal").val(formattedDate)
 
-        const tanggal = $("#filter-tanggal").val()
+      //   const tanggal = $("#filter-tanggal").val()
 
-        table.search(tanggal).draw()
-      })
+      //   table.search(tanggal).draw()
+      // })
 
       $("#filter-tanggal").on("change", function () {
         const tanggal = $(this).val()

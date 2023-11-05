@@ -1,3 +1,1 @@
-Testing
-
-- lakukan uji coba ketika telah izin absen pulang pkl dan belum terdapat absen datang
+buatki nanti supaya kalo adami absen datang dan approve absen pulang kehadirannya jadi Hadir

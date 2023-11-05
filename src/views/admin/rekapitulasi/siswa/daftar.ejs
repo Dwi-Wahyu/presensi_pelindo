@@ -3,7 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <meta name="description" content="" />
     <meta name="author" content="" />
 
@@ -22,10 +25,16 @@
 
     <!-- Datatable -->
     <link rel="stylesheet" href="/src/assets/vendor/datatable/bootstrap.css" />
-    <link rel="stylesheet" href="/src/assets/vendor/datatable/dataTables.bootstrap4.min.css" />
+    <link
+      rel="stylesheet"
+      href="/src/assets/vendor/datatable/dataTables.bootstrap4.min.css"
+    />
 
     <!-- Vendor Bootstrap  -->
-    <link rel="stylesheet" href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css" />
+    <link
+      rel="stylesheet"
+      href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css"
+    />
 
     <!-- Custom styles for this template-->
     <link href="/src/assets/css/sb-admin-2.min.css" rel="stylesheet" />
@@ -34,7 +43,8 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-      <%- include('../../../partials/sidebarAdmin', { link: 'rekap-pkl', parent: 'rekapitulasi'}) %>
+      <%- include('../../../partials/sidebarAdmin', { link: 'rekap-pkl', parent:
+      'rekapitulasi'}) %>
       <!-- End of Sidebar -->
 
       <!-- Content Wrapper -->
@@ -48,7 +58,9 @@
           <!-- Begin Page Content -->
           <div class="container-fluid">
             <!-- Page Heading -->
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
               <h1 class="h3 mb-0 text-gray-800">Rekapitulasi Siswa PKL</h1>
             </div>
 
@@ -62,11 +74,21 @@
                     <div class="row mb-3">
                       <div class="col-6">
                         <label for="filter-tanggal">Filter Tanggal</label>
-                        <input type="date" name="" id="filter-tanggal" class="form-control" />
+                        <input
+                          type="date"
+                          name=""
+                          id="filter-tanggal"
+                          class="form-control"
+                        />
                       </div>
                       <div class="col-6">
                         <label for="filter-nama">Filter Nama</label>
-                        <input type="text" name="" id="filter-nama" class="form-control" />
+                        <input
+                          type="text"
+                          name=""
+                          id="filter-nama"
+                          class="form-control"
+                        />
                       </div>
                     </div>
                     <table
@@ -136,12 +158,11 @@
           type: "GET",
         },
         columns: [
-          // { data: "nomor", title: "No" },
-          { data: "nama_siswa", title: "Nama" },
+          { data: "namaPengguna", title: "Nama" },
           { data: "tanggal", title: "Tanggal" },
           { data: "waktu_datang", title: "Waktu Datang" },
           { data: "waktu_pulang", title: "Waktu Pulang" },
-          { data: "status", title: "Status" },
+          { data: "kehadiran", title: "Status" },
           {
             data: "id",
             title: "Action",
@@ -151,13 +172,34 @@
                   <i class='bi bi-pencil-square'></i>  
                 </a>
       
-                <a href='/admin/rekapitulasi/pkl/cetak/${data}' class='btn btn-success'>
+                <a href='/admin/rekapitulasi/pkl/cetak/${data}' 
+                  class='btn btn-success'
+                >
                   <i class="bi bi-printer"></i>  
                 </a>
               `
             },
           },
         ],
+      })
+
+      const sekarang = new Date()
+
+      const tahun = sekarang.getFullYear()
+      const bulan = sekarang.getMonth() + 1
+      const tanggal = sekarang.getDate()
+
+      const stringBulan = bulan.toString().padStart(2, "0")
+      const stringTanggal = tanggal.toString().padStart(2, "0")
+
+      const formattedTanggal = `${tahun}-${stringBulan}-${stringTanggal}`
+
+      $(document).ready(function () {
+        $("#filter-tanggal").val(formattedTanggal)
+
+        const combined = `${formattedTanggal}::`
+
+        table.search(combined).draw()
       })
 
       $("#filter-tanggal").on("change", function () {

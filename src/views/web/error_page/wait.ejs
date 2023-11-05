@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRESENSI PELINDO</title>
+
+    <link rel="icon" href="/public/pelindo.png" />
+
+    <link rel="stylesheet" href="/src/assets/css/absen.css" />
+    <link rel="stylesheet" href="/src/assets/css/alert-absen.css" />
+    <link rel="stylesheet" href="/src/assets/vendor/fontawesome-free/css/all.css" />
+  </head>
+  <body>
+    <div class="alert-wrapper" id="location-wrapper">
+      <div class="alert-container">
+        <h1 class="alert-title">Failed to Input Attendance</h1>
+        <img src="/src/assets/images/wait.png" alt="" />
+        <h3 class="alert-subtitle" style="margin-bottom: 0.2rem">Please Wait Several Time</h3>
+        <h3 class="alert-subtitle">Try again after <%= waktuAbsen %></h3>
+        <button class="location-btn" onclick="location.href = '/'">BACK</button>
+      </div>
+    </div>
+  </body>
+</html>

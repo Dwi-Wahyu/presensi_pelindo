@@ -8,60 +8,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model pkl {
-  nomor         Int            @id @default(autoincrement())
-  id            String         @unique @default(uuid())
-  nama          String         @unique @db.VarChar(500)
-  jenis_kelamin String         @db.VarChar(100)
-  kode_unik     Int
-  sekolah       sekolah?       @relation(fields: [nama_sekolah], references: [nama])
-  nama_sekolah  String?
-  presensi      presensi_pkl[]
-}
-
-model presensi_pkl {
-  id           String  @id @default(uuid())
-  pkl          pkl?    @relation(fields: [nama_siswa], references: [nama])
-  nama_siswa   String?
-  waktu_datang String
-  waktu_pulang String
-  tanggal      String
-  status       String
-}
-
-model sekolah {
-  id        String @id @default(uuid())
-  nama      String @unique
-  siswa_pkl pkl[]
-}
-
-model magang {
-  nomor         Int               @id @default(autoincrement())
-  id            String            @unique @default(uuid())
-  nama          String            @unique
-  jenis_kelamin String
-  kode_unik     Int
-  kampus        kampus?           @relation(fields: [nama_kampus], references: [nama])
-  nama_kampus   String?
-  presensi      presensi_magang[]
-}
-
-model kampus {
-  id               String   @id @default(uuid())
-  nama             String   @unique
-  mahasiswa_magang magang[]
-}
-
-model presensi_magang {
-  id             String  @id @default(uuid())
-  magang         magang? @relation(fields: [nama_mahasiswa], references: [nama])
-  nama_mahasiswa String?
-  waktu_datang   String
-  waktu_pulang   String
-  tanggal        String
-  status         String
-}
-
 model perizinan {
   id         String @id @default(uuid())
   nama       String
@@ -70,4 +16,33 @@ model perizinan {
   keterangan String
   waktu_izin String
   status     String
+}
+
+model pengguna {
+  id            String         @id @default(uuid())
+  nama          String         @unique
+  status        String
+  jenis_kelamin String
+  kode_unik     Int
+  rekapitulasi  rekapitulasi[]
+  asal          asal?          @relation(fields: [namaAsal], references: [nama])
+  namaAsal      String?
+}
+
+model rekapitulasi {
+  id           String    @id @default(uuid())
+  pengguna     pengguna? @relation(fields: [namaPengguna], references: [nama])
+  namaPengguna String?
+  waktu_datang String
+  waktu_pulang String
+  tanggal      String
+  status       String
+  kehadiran    String
+}
+
+model asal {
+  id       String     @id @default(uuid())
+  nama     String     @unique
+  tipe     String
+  pengguna pengguna[]
 }

@@ -3,7 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <meta name="description" content="" />
     <meta name="author" content="" />
 
@@ -21,7 +24,10 @@
     />
 
     <!-- Vendor Bootstrap  -->
-    <link rel="stylesheet" href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css" />
+    <link
+      rel="stylesheet"
+      href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css"
+    />
 
     <!-- Custom styles for this template-->
     <link href="/src/assets/css/sb-admin-2.min.css" rel="stylesheet" />
@@ -47,8 +53,8 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-      <%- include('../../../partials/sidebarAdmin', { link: 'rekap-magang', parent: 'rekapitulasi'})
-      %>
+      <%- include('../../../partials/sidebarAdmin', { link: 'rekap-magang',
+      parent: 'rekapitulasi'}) %>
       <!-- End of Sidebar -->
 
       <!-- Content Wrapper -->
@@ -62,8 +68,12 @@
           <!-- Begin Page Content -->
           <div class="container-fluid">
             <!-- Page Heading -->
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-              <h1 class="h3 mb-0 text-gray-800 judul-page">Cetak Rekapitulasi Mahasiswa Magang</h1>
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800 judul-page">
+                Cetak Rekapitulasi Mahasiswa Magang
+              </h1>
               <button class="btn btn-primary" id="cetak" onclick="cetak()">
                 <i class="fas fa-print mr-1"></i>
                 Cetak
@@ -78,8 +88,8 @@
                 <div class="card shadow mb-4">
                   <div class="card-body">
                     <h4 class="text-center">ABSENSI</h4>
-                    <h4 class="text-center"><%= nama_kampus %></h4>
-                    <h6>BULAN OKTOBER</h6>
+                    <h4 class="text-center"><%= namaAsal %></h4>
+                    <h6>Bulan <%= bulan %></h6>
                     <table class="table table-bordered mt-1" id="cetak-table">
                       <thead>
                         <tr>
@@ -93,10 +103,13 @@
                       </thead>
                       <tbody>
                         <% for (const item of presensi) { %>
+                        <!-- prettier-ignore -->
                         <tr>
                           <td class="text-center"><%= item.tanggal %></td>
                           <% if (item.hari == "Sabtu" || item.hari == "Minggu") { %>
-                          <td colspan="2" class="text-center bg-gray-300"><%= item.hari %></td>
+                          <td colspan="2" class="text-center bg-gray-300">
+                            <%= item.hari %>
+                          </td>
                           <% } else { %>
                           <td class="text-center"><%= item.waktu_datang %></td>
                           <td class="text-center"><%= item.waktu_pulang %></td>
@@ -130,7 +143,7 @@
 
     <div id="content-to-print">
       <h4 class="text-center">ABSENSI</h4>
-      <h4 class="text-center"><%= nama_kampus %></h4>
+      <h4 class="text-center"><%= namaAsal %></h4>
       <h6>BULAN OKTOBER</h6>
       <table class="table table-bordered mt-1" id="cetak-table">
         <thead>
@@ -148,7 +161,9 @@
           <tr>
             <td class="text-center"><%= item.tanggal %></td>
             <% if (item.hari == "Sabtu" || item.hari == "Minggu") { %>
-            <td colspan="2" class="text-center bg-gray-300"><%= item.hari %></td>
+            <td colspan="2" class="text-center bg-gray-300">
+              <%= item.hari %>
+            </td>
             <% } else { %>
             <td class="text-center"><%= item.waktu_datang %></td>
             <td class="text-center"><%= item.waktu_pulang %></td>

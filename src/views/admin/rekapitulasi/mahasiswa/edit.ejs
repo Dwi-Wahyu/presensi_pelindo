@@ -3,7 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <meta name="description" content="" />
     <meta name="author" content="" />
 
@@ -21,7 +24,10 @@
     />
 
     <!-- Vendor Bootstrap  -->
-    <link rel="stylesheet" href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css" />
+    <link
+      rel="stylesheet"
+      href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css"
+    />
 
     <!-- Custom styles for this template-->
     <link href="/src/assets/css/sb-admin-2.min.css" rel="stylesheet" />
@@ -31,7 +37,8 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-      <%- include('../../../partials/sidebarAdmin', { link: 'rekap-pkl', parent: 'rekapitulasi'}) %>
+      <%- include('../../../partials/sidebarAdmin', { link: 'rekap-pkl', parent:
+      'rekapitulasi'}) %>
       <!-- End of Sidebar -->
 
       <!-- Content Wrapper -->
@@ -45,8 +52,12 @@
           <!-- Begin Page Content -->
           <div class="container-fluid">
             <!-- Page Heading -->
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-              <h1 class="h3 mb-0 text-gray-800">Edit Rekapitulasi Mahasiswa Magang</h1>
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">
+                Edit Rekapitulasi Mahasiswa Magang
+              </h1>
             </div>
 
             <!-- Content Row -->
@@ -66,15 +77,20 @@
                     >
                       <i class="fa fa-check-circle mr-1"></i>
                       Berhasil edit rekapitulasi
-                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <button
+                        type="button"
+                        class="close"
+                        data-dismiss="alert"
+                        aria-label="Close"
+                      >
                         <span aria-hidden="true">&times;</span>
                       </button>
                     </div>
 
                     <!-- Variabels -->
-                    <% const { waktu_datang } = rekapitulasiMagang %>
+                    <% const { waktu_datang } = rekapitulasi %>
                     <!--  -->
-                    <% const { waktu_pulang } = rekapitulasiMagang %>
+                    <% const { waktu_pulang } = rekapitulasi %>
                     <!-- Variabels -->
 
                     <form id="form">
@@ -85,7 +101,7 @@
                             type="text"
                             id="nama_siswa"
                             class="form-control"
-                            value="<%= rekapitulasiMagang.nama_mahasiswa %>"
+                            value="<%= rekapitulasi.namaPengguna %>"
                             disabled
                           />
                           <div class="input-group-append">
@@ -96,10 +112,16 @@
                         </div>
                       </div>
                       <div class="mb-3">
-                        <label for="waktu_datang" class="form-label">Waktu Datang</label>
+                        <label for="waktu_datang" class="form-label"
+                          >Waktu Datang</label
+                        >
                         <% if (waktu_datang == "-") { %>
                         <div class="input-group">
-                          <input type="time" id="waktu_datang" class="form-control" />
+                          <input
+                            type="time"
+                            id="waktu_datang"
+                            class="form-control"
+                          />
                         </div>
                         <% } else { %>
                         <div class="input-group">
@@ -107,16 +129,22 @@
                             type="time"
                             id="waktu_datang"
                             class="form-control"
-                            value="<%= rekapitulasiMagang.waktu_datang %>"
+                            value="<%= rekapitulasi.waktu_datang %>"
                           />
                         </div>
                         <% } %>
                       </div>
                       <div class="mb-3">
-                        <label for="waktu_pulang" class="form-label">Waktu Pulang</label>
+                        <label for="waktu_pulang" class="form-label"
+                          >Waktu Pulang</label
+                        >
                         <% if (waktu_pulang == "-") { %>
                         <div class="input-group">
-                          <input type="time" id="waktu_pulang" class="form-control" />
+                          <input
+                            type="time"
+                            id="waktu_pulang"
+                            class="form-control"
+                          />
                         </div>
                         <% } else { %>
                         <div class="input-group">
@@ -124,7 +152,7 @@
                             type="time"
                             id="waktu_pulang"
                             class="form-control"
-                            value="<%= rekapitulasiMagang.waktu_pulang %>"
+                            value="<%= rekapitulasi.waktu_pulang %>"
                           />
                         </div>
                         <% } %>
@@ -139,7 +167,10 @@
                           </span>
                           <span class="text">Kembali</span>
                         </a>
-                        <button type="submit" class="btn btn-success btn-icon-split">
+                        <button
+                          type="submit"
+                          class="btn btn-success btn-icon-split"
+                        >
                           <span class="icon text-white-50">
                             <i class="fas fa-plus"></i>
                           </span>
@@ -196,7 +227,7 @@
 
         $("#success-alert").addClass("d-none")
 
-        fetch("/admin/rekapitulasi/magang/update/<%= rekapitulasiMagang.id %>", {
+        fetch("/admin/rekapitulasi/magang/update/<%= rekapitulasi.id %>", {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

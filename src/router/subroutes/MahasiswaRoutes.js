@@ -1,12 +1,12 @@
 const Router = require("express").Router
 
 const {
-  inputMahasiswa,
   daftarMahasiswa,
+  editPengguna,
+  updatePengguna,
+  inputPengguna,
   inputMahasiswaPage,
-  editMahasiswa,
-  updateMahasiswa,
-} = require("../../controllers/MahasiswaController")
+} = require("../../controllers/PenggunaController")
 
 const MahasiswaRoutes = Router()
 
@@ -18,10 +18,10 @@ MahasiswaRoutes.get("/daftar", (req, res) => {
 
 MahasiswaRoutes.get("/daftar/data", daftarMahasiswa)
 
-MahasiswaRoutes.get("/edit/:id", editMahasiswa)
+MahasiswaRoutes.get("/edit/:id", editPengguna)
 
-MahasiswaRoutes.patch("/:id", updateMahasiswa)
+MahasiswaRoutes.patch("/:id", updatePengguna)
 
-MahasiswaRoutes.post("/", inputMahasiswa)
+MahasiswaRoutes.post("/", inputPengguna)
 
 module.exports = MahasiswaRoutes

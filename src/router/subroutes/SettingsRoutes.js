@@ -1,16 +1,11 @@
 const {
-  daftarKampus,
-  editKampus,
-  hapusKampus,
-  inputKampus,
-} = require("../../controllers/KampusController")
-
-const {
-  daftarSekolah,
-  editSekolah,
-  hapusSekolah,
   inputSekolah,
-} = require("../../controllers/SekolahController")
+  daftarSekolah,
+  updateAsal,
+  hapusAsal,
+  daftarKampus,
+  inputKampus,
+} = require("../../controllers/AsalController")
 
 const Router = require("express").Router
 
@@ -30,14 +25,14 @@ settingsRoutes.get("/kampus/data", daftarKampus)
 
 settingsRoutes.post("/sekolah", inputSekolah)
 
-settingsRoutes.patch("/sekolah", editSekolah)
+settingsRoutes.patch("/sekolah", updateAsal)
 
 settingsRoutes.post("/kampus", inputKampus)
 
-settingsRoutes.patch("/kampus", editKampus)
+settingsRoutes.patch("/kampus", updateAsal)
 
-settingsRoutes.delete("/sekolah", hapusSekolah)
+settingsRoutes.delete("/sekolah", hapusAsal)
 
-settingsRoutes.delete("/kampus", hapusKampus)
+settingsRoutes.delete("/kampus", hapusAsal)
 
 module.exports = settingsRoutes

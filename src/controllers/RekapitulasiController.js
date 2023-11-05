@@ -1,9 +1,17 @@
+require("moment-timezone")
+
 const { PrismaClient } = require("@prisma/client")
-const { totalQuery, filterQuery, pagedQuery } = require("../functions/datatable")
+const {
+  totalQuery,
+  filterQuery,
+  pagedQuery,
+} = require("../functions/datatable")
 const { log } = require("console")
-const { getDaysInMonth, getDaysInWeek } = require("../functions/date")
-const cek_kode_absen = require("../functions/common")
+const { getDaysInMonth } = require("../functions/date")
+const supabase = require("../utils/supabase")
 const prisma = new PrismaClient()
+const moment = require("moment")
+const redisClient = require("../utils/redis")
 
 const RekapitulasiController = {}
 
@@ -27,28 +35,39 @@ RekapitulasiController.rekapitulasiPKL = async (req, res) => {
     nama = ""
   }
 
-  const search = `
-    AND (tanggal LIKE '%${tanggal}%'
-    AND nama_siswa LIKE '%${nama}%')
-  `
-
   const { start, length, draw } = req.query
-  const total = await totalQuery("presensi_pkl", "tanggal")
-  const filtered = await filterQuery("presensi_pkl", search, "tanggal")
-  const paged = await pagedQuery(
-    "presensi_pkl",
-    search,
-    start,
-    length,
-    "tanggal",
-    column_sort_order
-  )
+
+  const startAt = parseInt(start)
+  const stopAt = parseInt(length)
+
+  const { data: total } = await supabase
+    .from("rekapitulasi")
+    .select()
+    .eq("status", "pkl")
+
+  const { data: filtered } = await supabase
+    .from("rekapitulasi")
+    .select()
+    .eq("status", "pkl")
+    .like("tanggal", `%${tanggal}%`)
+    .like("namaPengguna", `%${nama}%`)
+
+  const { data } = await supabase
+    .from("rekapitulasi")
+    .select()
+    .eq("status", "pkl")
+    .like("tanggal", `%${tanggal}%`)
+    .like("namaPengguna", `%${nama}%`)
+    .range(startAt, stopAt)
+
+  const recordsTotal = total.length
+  const recordsFiltered = filtered.length
 
   const row = {
     draw,
-    recordsTotal: total,
-    recordsFiltered: filtered,
-    data: paged,
+    recordsTotal,
+    recordsFiltered,
+    data,
   }
 
   res.json(row)
@@ -74,16 +93,208 @@ RekapitulasiController.rekapitulasiMagang = async (req, res) => {
     nama = ""
   }
 
+  const { start, length, draw } = req.query
+
+  const startAt = parseInt(start)
+  const stopAt = parseInt(length)
+
+  const { data: total } = await supabase
+    .from("rekapitulasi")
+    .select()
+    .eq("status", "magang")
+
+  const { data: filtered } = await supabase
+    .from("rekapitulasi")
+    .select()
+    .eq("status", "magang")
+    .like("tanggal", `%${tanggal}%`)
+    .like("namaPengguna", `%${nama}%`)
+
+  const { data } = await supabase
+    .from("rekapitulasi")
+    .select()
+    .eq("status", "magang")
+    .like("tanggal", `%${tanggal}%`)
+    .like("namaPengguna", `%${nama}%`)
+    .range(startAt, stopAt)
+
+  const recordsTotal = total.length
+  const recordsFiltered = filtered.length
+
+  const row = {
+    draw,
+    recordsTotal,
+    recordsFiltered,
+    data,
+  }
+
+  res.json(row)
+}
+
+RekapitulasiController.editRekapitulasi = async (req, res) => {
+  const { id } = req.params
+
+  const rekapitulasi = await prisma.rekapitulasi.findFirst({
+    where: {
+      id,
+    },
+  })
+
+  res.render("admin/rekapitulasi/siswa/edit", { rekapitulasi })
+}
+
+RekapitulasiController.updateRekapitulasi = async (req, res) => {
+  const { id } = req.params
+  let { waktu_datang, waktu_pulang } = req.body
+
+  let kehadiran = "Hadir"
+
+  const kosong_datang = waktu_datang == ""
+  const kosong_pulang = waktu_pulang == ""
+
+  if (kosong_datang) {
+    waktu_datang = "-"
+    kehadiran = "Tidak Hadir"
+  }
+
+  if (kosong_pulang) {
+    waktu_pulang = "-"
+    kehadiran = "Tidak Hadir"
+  }
+
+  if (!kosong_datang && !kosong_pulang) {
+    kehadiran = "Hadir"
+  }
+
+  const updateRekap = await prisma.rekapitulasi.update({
+    where: {
+      id,
+    },
+    data: {
+      waktu_datang,
+      waktu_pulang,
+      kehadiran,
+    },
+  })
+
+  res.status(200).end()
+}
+
+RekapitulasiController.cetakRekapitulasi = async (req, res) => {
+  const { id } = req.params
+
+  const rekapitulasi = await prisma.rekapitulasi.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      pengguna: true,
+    },
+  })
+
+  const { tanggal } = rekapitulasi
+
+  const bulan = moment(tanggal, "YYYY-MM-DD").format("MMMM")
+
+  const { namaAsal, nama } = rekapitulasi.pengguna
+
+  const getCache = await redisClient.get(`${nama}_${bulan}`)
+
+  if (!getCache) {
+    const daysInMonth = getDaysInMonth(tanggal)
+
+    const presensi = await getPresensi(daysInMonth)
+
+    const stringifyData = JSON.stringify(presensi)
+
+    const setCache = await redisClient.setEx(
+      `${nama}_${bulan}`,
+      120,
+      stringifyData
+    )
+
+    log(setCache)
+
+    res.render("admin/rekapitulasi/siswa/cetak", {
+      presensi,
+      namaAsal,
+      nama,
+      bulan,
+    })
+  }
+
+  if (getCache) {
+    const parseData = JSON.parse(getCache)
+
+    res.render("admin/rekapitulasi/siswa/cetak", {
+      presensi: parseData,
+      namaAsal,
+      nama,
+      bulan,
+    })
+  }
+
+  async function getPresensi(daysRange) {
+    const presensi = []
+
+    for (const item of daysRange) {
+      const splitTanggal = item.tanggal.split("-")
+      const tanggal = splitTanggal[2]
+
+      const presensiTanggal = await prisma.rekapitulasi.findFirst({
+        where: {
+          tanggal: item.tanggal,
+        },
+      })
+
+      if (!presensiTanggal) {
+        presensi.push({
+          tanggal,
+          hari: item.hari,
+          waktu_datang: "-",
+          waktu_pulang: "-",
+          status: "Tidak Hadir",
+        })
+      } else {
+        const { waktu_datang, waktu_pulang, status } = presensiTanggal
+        presensi.push({
+          tanggal,
+          hari: item.hari,
+          waktu_datang,
+          waktu_pulang,
+          status,
+        })
+      }
+    }
+
+    return presensi
+  }
+}
+
+RekapitulasiController.daftarIzin = async (req, res) => {
+  if (typeof req.query.order == "undefined") {
+    var column_name = "nomor"
+    var column_sort_order = "desc"
+  } else {
+    var column_index = req.query.order[0]["column"]
+    var column_name = req.query.columns[column_index]["data"]
+    var column_sort_order = req.query.order[0]["dir"]
+  }
+
+  const search_value = req.query.search["value"]
+
   const search = `
-    AND (tanggal LIKE '%${tanggal}%'
-    AND nama_mahasiswa LIKE '%${nama}%')
+    AND (
+      tanggal LIKE '%${search_value}%' 
+      AND status = 'Belum approve'
+    )
   `
 
   const { start, length, draw } = req.query
-  const total = await totalQuery("presensi_magang", "tanggal")
-  const filtered = await filterQuery("presensi_magang", search, "tanggal")
+  const total = await totalQuery("perizinan", "tanggal")
+  const filtered = await filterQuery("perizinan", search, "tanggal")
   const paged = await pagedQuery(
-    "presensi_magang",
+    "perizinan",
     search,
     start,
     length,
@@ -101,343 +312,69 @@ RekapitulasiController.rekapitulasiMagang = async (req, res) => {
   res.json(row)
 }
 
-RekapitulasiController.editRekapPKL = async (req, res) => {
-  const { id } = req.params
-
-  const rekapitulasiPKL = await prisma.presensi_pkl.findFirst({
-    where: {
-      id,
-    },
-  })
-
-  res.render("admin/rekapitulasi/siswa/edit", { rekapitulasiPKL })
-}
-
-RekapitulasiController.editRekapMagang = async (req, res) => {
-  const { id } = req.params
-
-  const rekapitulasiMagang = await prisma.presensi_magang.findFirst({
-    where: {
-      id,
-    },
-  })
-
-  res.render("admin/rekapitulasi/mahasiswa/edit", { rekapitulasiMagang })
-}
-
-RekapitulasiController.updateRekapPKL = async (req, res) => {
-  const { id } = req.params
-  let { waktu_datang, waktu_pulang } = req.body
-
-  let kehadiran = "Hadir"
-
-  const kosong_datang = waktu_datang == ""
-  const kosong_pulang = waktu_pulang == ""
-
-  if (kosong_datang) {
-    waktu_datang = "-"
-    kehadiran = "Tidak Hadir"
-  }
-
-  if (kosong_pulang) {
-    waktu_pulang = "-"
-    kehadiran = "Tidak Hadir"
-  }
-
-  if (!kosong_datang && !kosong_pulang) {
-    kehadiran = "Hadir"
-  }
-
-  const updateRekap = await prisma.presensi_pkl.update({
-    where: {
-      id,
-    },
-    data: {
-      waktu_datang,
-      waktu_pulang,
-      status: kehadiran,
-    },
-  })
-
-  log(updateRekap)
-
-  res.status(200).end()
-}
-
-RekapitulasiController.updateRekapMagang = async (req, res) => {
-  const { id } = req.params
-  let { waktu_datang, waktu_pulang } = req.body
-
-  let kehadiran = "Hadir"
-
-  const kosong_datang = waktu_datang == ""
-  const kosong_pulang = waktu_pulang == ""
-
-  if (kosong_datang) {
-    waktu_datang = "-"
-    kehadiran = "Tidak Hadir"
-  }
-
-  if (kosong_pulang) {
-    waktu_pulang = "-"
-    kehadiran = "Tidak Hadir"
-  }
-
-  if (!kosong_datang && !kosong_pulang) {
-    kehadiran = "Hadir"
-  }
-
-  const updateRekap = await prisma.presensi_magang.update({
-    where: {
-      id,
-    },
-    data: {
-      waktu_datang,
-      waktu_pulang,
-      status: kehadiran,
-    },
-  })
-
-  log(updateRekap)
-
-  res.status(200).end()
-}
-
-RekapitulasiController.cetakRekapitulasiPKL = async (req, res) => {
-  const { id } = req.params
-
-  async function getPresensi(daysRange) {
-    const presensi = []
-
-    for (const item of daysRange) {
-      const splitTanggal = item.tanggal.split("-")
-      const tanggal = splitTanggal[2]
-
-      const presensiTanggal = await prisma.presensi_pkl.findFirst({
-        where: {
-          tanggal: item.tanggal,
-        },
-      })
-
-      if (!presensiTanggal) {
-        presensi.push({
-          tanggal,
-          hari: item.hari,
-          waktu_datang: "-",
-          waktu_pulang: "-",
-          status: "Tidak Hadir",
-        })
-      } else {
-        const { waktu_datang, waktu_pulang, status } = presensiTanggal
-        presensi.push({
-          tanggal,
-          hari: item.hari,
-          waktu_datang,
-          waktu_pulang,
-          status,
-        })
-      }
-    }
-
-    return presensi
-  }
-
-  const presensi_pkl = await prisma.presensi_pkl.findFirst({
-    where: {
-      id,
-    },
-    include: {
-      pkl: true,
-    },
-  })
-
-  const { tanggal } = presensi_pkl
-
-  const daysInMonth = getDaysInMonth(tanggal)
-
-  const presensi = await getPresensi(daysInMonth)
-
-  const { nama_sekolah, nama } = presensi_pkl.pkl
-
-  res.render("admin/rekapitulasi/siswa/cetak", { presensi, nama_sekolah, nama })
-}
-
-RekapitulasiController.cetakRekapitulasiMagang = async (req, res) => {
-  const { id } = req.params
-
-  async function getPresensi(daysRange) {
-    const presensi = []
-
-    for (const item of daysRange) {
-      const splitTanggal = item.tanggal.split("-")
-      const tanggal = splitTanggal[2]
-
-      const presensiTanggal = await prisma.presensi_magang.findFirst({
-        where: {
-          tanggal: item.tanggal,
-        },
-      })
-
-      if (!presensiTanggal) {
-        presensi.push({
-          tanggal,
-          hari: item.hari,
-          waktu_datang: "-",
-          waktu_pulang: "-",
-          status: "Tidak Hadir",
-        })
-      } else {
-        const { waktu_datang, waktu_pulang, status } = presensiTanggal
-        presensi.push({
-          tanggal,
-          hari: item.hari,
-          waktu_datang,
-          waktu_pulang,
-          status,
-        })
-      }
-    }
-
-    return presensi
-  }
-
-  const presensi_magang = await prisma.presensi_magang.findFirst({
-    where: {
-      id,
-    },
-    include: {
-      magang: true,
-    },
-  })
-
-  const { tanggal } = presensi_magang
-
-  const daysInMonth = getDaysInMonth(tanggal)
-
-  const presensi = await getPresensi(daysInMonth)
-
-  const { nama_kampus, nama } = presensi_magang.magang
-
-  res.render("admin/rekapitulasi/mahasiswa/cetak", { presensi, nama_kampus, nama })
-}
-
-RekapitulasiController.daftarIzin = async (req, res) => {
-  if (typeof req.query.order == "undefined") {
-    var column_name = "nomor"
-    var column_sort_order = "desc"
-  } else {
-    var column_index = req.query.order[0]["column"]
-    var column_name = req.query.columns[column_index]["data"]
-    var column_sort_order = req.query.order[0]["dir"]
-  }
-
-  const search_value = req.query.search["value"]
-
-  const search = `
-    AND (tanggal LIKE '%${search_value}%')
-  `
-
-  const { start, length, draw } = req.query
-  const total = await totalQuery("perizinan", "tanggal")
-  const filtered = await filterQuery("perizinan", search, "tanggal")
-  const paged = await pagedQuery("perizinan", search, start, length, "tanggal", column_sort_order)
-
-  const row = {
-    draw,
-    recordsTotal: total,
-    recordsFiltered: filtered,
-    data: paged,
-  }
-
-  res.json(row)
-}
-
 RekapitulasiController.approveIzin = async (req, res) => {
-  const { id, nama, tanggal, status, kode_unik } = req.body
+  const { id, nama: namaPengguna, tanggal, waktu_izin } = req.body
 
-  const seharian = status == "seharian"
-  const datang = status == "datang"
-  const pulang = status == "pulang"
+  const cekAbsen = await prisma.rekapitulasi.findFirst({
+    where: {
+      namaPengguna,
+      tanggal,
+    },
+  })
 
-  const absen = await cek_kode_absen(kode_unik)
-
-  const absenPKL = absen == "pkl"
-  const absenMagang = absen == "magang"
-
-  if (seharian && absenPKL) {
-    await prisma.presensi_pkl.create({
-      data: {
-        nama_siswa: nama,
-        waktu_datang: "Izin",
-        waktu_pulang: "Izin",
-        tanggal,
-        status: "Izin seharian",
-      },
-    })
-  }
-
-  if (seharian && absenMagang) {
-    await prisma.presensi_magang.create({
-      data: {
-        nama_mahasiswa: nama,
-        waktu_datang: "Izin",
-        waktu_pulang: "Izin",
-        tanggal,
-        status: "Izin seharian",
-      },
-    })
-  }
-
-  // Todo: buat logic izin absen datang
-  if (datang && absenPKL) {
-  }
-
-  // Jika izin pulang dan absen pkl
-  if (pulang && absenPKL) {
-    const cek_absen_datang = await prisma.presensi_pkl.findFirst({
+  if (!cekAbsen) {
+    await prisma.perizinan.update({
       where: {
-        nama_siswa: nama,
-        tanggal,
+        id,
+      },
+      data: {
+        status: "Approve",
       },
     })
 
-    // Jika terdapat absen datang
-    if (cek_absen_datang) {
-      const { id } = cek_absen_datang
-      const updateAbsen = await prisma.presensi_pkl.update({
+    res.status(200).end()
+  }
+
+  if (cekAbsen) {
+    const izinSeharian = waktu_izin == "seharian"
+    const izinDatang = waktu_izin == "datang"
+    const izinPulang = waktu_izin == "pulang"
+
+    const absenDatang = cekAbsen.waktu_datang != "-"
+    const absenPulang = cekAbsen.waktu_pulang != "-"
+
+    if (izinSeharian) {
+      res.status(400).json({ message: "Pengguna telah absen" })
+    }
+
+    if (izinDatang && absenDatang) {
+      res.status(400).json({ message: "Pengguna telah absen datang" })
+    }
+
+    if (izinPulang && absenPulang) {
+      res.status(400).json({ message: "Pengguna telah absen pulang" })
+    }
+
+    if (izinPulang && absenDatang) {
+      await prisma.rekapitulasi.update({
+        where: {
+          id: cekAbsen.id,
+        },
+        data: {
+          waktu_pulang: "Izin",
+          kehadiran: "Hadir",
+        },
+      })
+
+      res.status(200).end()
+
+      await prisma.perizinan.delete({
         where: {
           id,
         },
-        data: {
-          waktu_pulang: "Izin",
-          status: "Izin pulang",
-        },
       })
-
-      log(updateAbsen)
-    }
-
-    // Jika belum terdapat absen datang
-    if (!cek_absen_datang) {
-      const absen = await prisma.presensi_pkl.create({
-        data: {
-          waktu_datang: "-",
-          waktu_pulang: "Izin",
-          status: "Izin",
-        },
-      })
-
-      log(absen)
     }
   }
-
-  // await prisma.perizinan.delete({
-  //   where: {
-  //     id,
-  //   },
-  // })
-
-  res.status(200).end()
 }
 
 RekapitulasiController.tolakIzin = async (req, res) => {

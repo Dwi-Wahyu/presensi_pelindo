@@ -8,12 +8,57 @@
     <link rel="icon" href="/public/pelindo.png" />
 
     <link rel="stylesheet" href="/src/assets/css/absen.css" />
-    <link rel="stylesheet" href="/src/assets/vendor/fontawesome-free/css/all.css" />
+    <link
+      rel="stylesheet"
+      href="/src/assets/vendor/fontawesome-free/css/all.css"
+    />
     <link rel="stylesheet" href="/src/assets/css/sb-admin-2.min.css" />
     <link rel="stylesheet" href="/src/assets/css/loader.css" />
     <link rel="stylesheet" href="/node_modules/toastify-js/src/toastify.css" />
+
+    <link rel="stylesheet" href="/src/assets/css/aturan.css" />
   </head>
   <body>
+    <div id="aturan-wrapper">
+      <h1 class="izin-title">Peraturan Pengajuan Izin</h1>
+
+      <p>
+        Pengajuan izin adalah bagian penting dalam menjaga kedisiplinan dan
+        efisiensi. Kami memahami bahwa kebutuhan untuk mengajukan izin dapat
+        muncul dalam berbagai situasi. Namun, agar semua berjalan dengan lancar,
+        ada beberapa peraturan yang harus diikuti dengan seksama. Silakan baca
+        dengan cermat peraturan di bawah ini sebelum Anda mengajukan izin:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Pengajuan Izin Diproses oleh Administrator: </strong>Setiap
+          pengajuan izin akan diproses terlebih dahulu oleh administrator. Izin
+          tersebut akan dinilai apakah akan disetujui atau ditolak. Kami mohon
+          bersabar dalam menunggu keputusan dari pihak administrator.
+        </li>
+        <li>
+          <strong>Keterangan Izin yang Masuk Akal: </strong>Saat Anda mengajukan
+          izin, pastikan keterangan yang Anda sertakan masuk akal dan sesuai
+          dengan situasi yang sebenarnya. Izin dengan keterangan yang tidak
+          masuk akal dapat ditolak.
+        </li>
+        <li>
+          <strong>Izin Sakit: </strong>Jika Anda mengajukan izin sakit, izin
+          akan secara otomatis diberikan selama satu hari penuh. Hal ini
+          bertujuan memberikan waktu yang cukup bagi Anda untuk pulih sepenuhnya
+          sebelum kembali ke aktivitas Magang atau PKL.
+        </li>
+      </ul>
+
+      <div class="confirmation-box">
+        <button class="btn btn-outline-primary" onclick="history.back()">
+          Kembali
+        </button>
+        <button class="btn btn-primary" onclick="setuju()">Setuju</button>
+      </div>
+    </div>
+
     <div class="wrapper" id="absen-wrapper">
       <div class="d-none" id="popup-loading">
         <img src="/public/loader/bar.svg" alt="" />
@@ -23,7 +68,7 @@
         <form>
           <div class="mb-3">
             <label for="personal-code" class="form-label">Personal Code</label>
-            <input type="text" id="personal-code" class="form-control" />
+            <input type="number" id="personal-code" class="form-control" />
           </div>
           <div class="mb-3">
             <label for="tanggal" class="form-label">Tanggal</label>
@@ -31,9 +76,12 @@
           </div>
           <div class="mb-3">
             <label for="keterangan" class="form-label">Keterangan</label>
-            <textarea class="form-control" id="keterangan"></textarea>
+            <select id="keterangan" class="form-control">
+              <option value="izin">Izin</option>
+              <option value="sakit">Sakit</option>
+            </select>
           </div>
-          <div class="mb-5">
+          <div class="mb-4">
             <label for="waktu_izin" class="form-label">Waktu izin</label>
             <select id="waktu_izin" class="form-control">
               <option disabled selected value="">-- Pilih Waktu --</option>
@@ -64,6 +112,18 @@
     <script src="/node_modules/toastify-js/src/toastify.js"></script>
 
     <script>
+      $("#keterangan").on("change", function () {
+        const ket = $(this).val()
+
+        if (ket === "sakit") {
+          $("#waktu_izin").val("seharian")
+        }
+      })
+
+      function setuju() {
+        $("#aturan-wrapper").addClass("d-none")
+      }
+
       $("form").on("submit", async (e) => {
         e.preventDefault()
 
