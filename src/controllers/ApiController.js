@@ -61,11 +61,13 @@ apiController.presensi = async (req, res) => {
 
   if (pengguna && !adaIzin && cekAbsen) {
     const hadir = cekAbsen.kehadiran == "Hadir"
-    const waktu_datang = moment(cekAbsen.waktu_datang, "HH:mm")
 
-    const waktuAbsen = waktu_datang.add(240, "minute").format("HH:mm")
+    const { waktu_datang } = cekAbsen
+    const momentDatang = moment(waktu_datang, "HH:mm")
 
-    const durasi = sekarang.diff(waktu_datang, "minute")
+    const waktuAbsen = momentDatang.add(240, "minute").format("HH:mm")
+
+    const durasi = sekarang.diff(momentDatang, "minute")
 
     const durasiCukup = durasi > 240
 

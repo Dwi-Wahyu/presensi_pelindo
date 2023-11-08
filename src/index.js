@@ -5,20 +5,15 @@ const connectPgSimple = require("connect-pg-simple")
 const bodyParser = require("body-parser")
 const path = require("path")
 const { log } = require("console")
-const { dbConnect, pool } = require("./utils/database")
+const { pool } = require("./utils/database")
 
 const routes = require("./router/routes")
-const redisClient = require("./utils/redis")
 
 const port = process.env.PORT || 3000
 
 const pgStore = connectPgSimple(session)
 
 const app = express()
-
-// Connect to utils
-dbConnect()
-redisClient.connect()
 
 // Static file configuration
 app.use("/src", express.static("src"))

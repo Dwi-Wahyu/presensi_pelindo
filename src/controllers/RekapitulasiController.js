@@ -11,7 +11,6 @@ const { getDaysInMonth } = require("../functions/date")
 const supabase = require("../utils/supabase")
 const prisma = new PrismaClient()
 const moment = require("moment")
-const redisClient = require("../utils/redis")
 
 const RekapitulasiController = {}
 
@@ -198,41 +197,16 @@ RekapitulasiController.cetakRekapitulasi = async (req, res) => {
 
   const { namaAsal, nama } = rekapitulasi.pengguna
 
-  const getCache = await redisClient.get(`${nama}_${bulan}`)
+  const daysInMonth = getDaysInMonth(tanggal)
 
-  if (!getCache) {
-    const daysInMonth = getDaysInMonth(tanggal)
+  const presensi = await getPresensi(daysInMonth)
 
-    const presensi = await getPresensi(daysInMonth)
-
-    const stringifyData = JSON.stringify(presensi)
-
-    const setCache = await redisClient.setEx(
-      `${nama}_${bulan}`,
-      120,
-      stringifyData
-    )
-
-    log(setCache)
-
-    res.render("admin/rekapitulasi/siswa/cetak", {
-      presensi,
-      namaAsal,
-      nama,
-      bulan,
-    })
-  }
-
-  if (getCache) {
-    const parseData = JSON.parse(getCache)
-
-    res.render("admin/rekapitulasi/siswa/cetak", {
-      presensi: parseData,
-      namaAsal,
-      nama,
-      bulan,
-    })
-  }
+  res.render("admin/rekapitulasi/siswa/cetak", {
+    presensi,
+    namaAsal,
+    nama,
+    bulan,
+  })
 
   async function getPresensi(daysRange) {
     const presensi = []

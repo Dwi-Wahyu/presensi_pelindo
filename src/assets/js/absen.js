@@ -32,71 +32,71 @@ async function permissionGranted(position) {
 
     alert(text)
 
-    if (value > 300) {
-      location.href = "/location-far"
-    } else {
-      const absenUrl = "/api/absen"
-
-      const fetchAbsen = await fetch(absenUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code }),
-      })
-
-      if (fetchAbsen.ok) {
-        location.href = "/success"
-      } else {
-        const absenError = await fetchAbsen.json()
-        const { message } = absenError
-
-        if (message == "Wrong Personal Code") {
-          location.href = "/wrong-code"
-        }
-
-        if (message == "Please wait several time") {
-          const { waktuAbsen } = absenError
-
-          location.href = `/wait/${waktuAbsen}`
-        }
-
-        if (message == "You have been attend two times today") {
-          location.href = "/already-attended"
-        }
-      }
-    }
-
-    // const absenUrl = "/api/absen"
-
-    // const fetchAbsen = await fetch(absenUrl, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ code }),
-    // })
-
-    // if (fetchAbsen.ok) {
-    //   location.href = "/success"
+    // if (value > 300) {
+    //   location.href = "/location-far"
     // } else {
-    //   const absenError = await fetchAbsen.json()
-    //   const { message } = absenError
+    //   const absenUrl = "/api/absen"
 
-    //   if (message == "Wrong Personal Code") {
-    //     location.href = "/wrong-code"
-    //   }
+    //   const fetchAbsen = await fetch(absenUrl, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ code }),
+    //   })
 
-    //   if (message == "Please wait several time") {
-    //     const { waktuAbsen } = absenError
+    //   if (fetchAbsen.ok) {
+    //     location.href = "/success"
+    //   } else {
+    //     const absenError = await fetchAbsen.json()
+    //     const { message } = absenError
 
-    //     location.href = `/wait/${waktuAbsen}`
-    //   }
+    //     if (message == "Wrong Personal Code") {
+    //       location.href = "/wrong-code"
+    //     }
 
-    //   if (message == "You have been attend two times today") {
-    //     location.href = "/already-attended"
+    //     if (message == "Please wait several time") {
+    //       const { waktuAbsen } = absenError
+
+    //       location.href = `/wait/${waktuAbsen}`
+    //     }
+
+    //     if (message == "You have been attend two times today") {
+    //       location.href = "/already-attended"
+    //     }
     //   }
     // }
+
+    const absenUrl = "/api/absen"
+
+    const fetchAbsen = await fetch(absenUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code }),
+    })
+
+    if (fetchAbsen.ok) {
+      location.href = "/success"
+    } else {
+      const absenError = await fetchAbsen.json()
+      const { message } = absenError
+
+      if (message == "Wrong Personal Code") {
+        location.href = "/wrong-code"
+      }
+
+      if (message == "Please wait several time") {
+        const { waktuAbsen } = absenError
+
+        location.href = `/wait/${waktuAbsen}`
+      }
+
+      if (message == "You have been attend two times today") {
+        location.href = "/already-attended"
+      }
+    }
   } catch (err) {
     console.log(err)
   }

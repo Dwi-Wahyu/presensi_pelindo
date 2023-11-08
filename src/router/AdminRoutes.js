@@ -13,6 +13,7 @@ adminRoutes.get("/", (req, res) => {
 
 adminRoutes.use("/siswa", siswaRoutes)
 
+
 adminRoutes.use("/mahasiswa", mahasiswaRoutes)
 
 adminRoutes.use("/rekapitulasi", rekapitulasiRoutes)
