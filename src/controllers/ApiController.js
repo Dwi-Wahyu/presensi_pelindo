@@ -6,6 +6,8 @@ const prisma = new PrismaClient()
 
 const apiController = {}
 
+moment.tz("Asia/Makassar")
+
 apiController.presensi = async (req, res) => {
   const { code } = req.body
 
@@ -60,26 +62,26 @@ apiController.presensi = async (req, res) => {
   }
 
   if (pengguna && !adaIzin && cekAbsen) {
-    const hadir = cekAbsen.kehadiran == "Hadir"
+    const { waktu_datang, waktu_pulang } = cekAbsen
 
-    const { waktu_datang } = cekAbsen
+    const telahHadir = waktu_datang != "-" && waktu_pulang != "-"
+
     const momentDatang = moment(waktu_datang, "HH:mm")
 
-    const waktuAbsen = momentDatang.add(240, "minute").format("HH:mm")
+    const momentBisaAbsen = momentDatang.add(4, "hour")
+    const waktuAbsen = momentBisaAbsen.format("HH:mm")
 
-    const durasi = sekarang.diff(momentDatang, "minute")
+    const bisaAbsen = sekarang.isAfter(momentBisaAbsen)
 
-    const durasiCukup = durasi > 240
-
-    if (hadir) {
+    if (telahHadir) {
       res.status(400).json({ message: "You have been attend two times today" })
     }
 
-    if (!durasiCukup) {
+    if (!bisaAbsen) {
       res.status(400).json({ message: "Please wait several time", waktuAbsen })
     }
 
-    if (!hadir && durasiCukup) {
+    if (!telahHadir && bisaAbsen) {
       await prisma.rekapitulasi.update({
         where: {
           id: cekAbsen.id,
