@@ -6,7 +6,27 @@ const prisma = new PrismaClient()
 
 const apiController = {}
 
-moment.tz("Asia/Makassar")
+// moment.tz("Asia/Makassar")
+
+apiController.login = async (req, res) => {
+  const { code } = req.body
+
+  const kode_unik = parseInt(code)
+
+  const pengguna = await prisma.pengguna.findFirst({
+    where: {
+      kode_unik,
+    },
+  })
+
+  if (pengguna) {
+    res.status(200).json({ message: "Berhasil Login" })
+  }
+
+  if (!pengguna) {
+    res.status(401).json({ message: "Wrong Personal Code" })
+  }
+}
 
 apiController.presensi = async (req, res) => {
   const { code } = req.body
