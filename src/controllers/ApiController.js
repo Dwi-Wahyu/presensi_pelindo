@@ -20,7 +20,14 @@ apiController.login = async (req, res) => {
   })
 
   if (pengguna) {
-    res.status(200).json({ message: "Berhasil Login" })
+    const infoPengguna = {
+      nama: pengguna.namaPengguna,
+      asal: pengguna.namaAsal,
+      jenis_kelamin: pengguna.jenis_kelamin,
+      code,
+    }
+
+    res.status(200).json({ infoPengguna })
   }
 
   if (!pengguna) {
@@ -82,26 +89,11 @@ apiController.presensi = async (req, res) => {
   }
 
   if (pengguna && !adaIzin && cekAbsen) {
-    const { waktu_datang, waktu_pulang } = cekAbsen
-
     const telahHadir = waktu_datang != "-" && waktu_pulang != "-"
-
-    const momentDatang = moment(waktu_datang, "HH:mm")
-
-    const momentBisaAbsen = momentDatang.add(4, "hour")
-    const waktuAbsen = momentBisaAbsen.format("HH:mm")
-
-    const bisaAbsen = sekarang.isAfter(momentBisaAbsen)
 
     if (telahHadir) {
       res.status(400).json({ message: "You have been attend two times today" })
-    }
-
-    if (!bisaAbsen) {
-      res.status(400).json({ message: "Please wait several time", waktuAbsen })
-    }
-
-    if (!telahHadir && bisaAbsen) {
+    } else {
       await prisma.rekapitulasi.update({
         where: {
           id: cekAbsen.id,
@@ -114,6 +106,41 @@ apiController.presensi = async (req, res) => {
 
       res.status(200).end()
     }
+
+    // const { waktu_datang, waktu_pulang } = cekAbsen
+
+    // const telahHadir = waktu_datang != "-" && waktu_pulang != "-"
+
+    // const momentDatang = moment(waktu_datang, "HH:mm")
+
+    // const momentBisaAbsen = momentDatang.add(4, "hour")
+    // const waktuAbsen = momentBisaAbsen.format("HH:mm")
+
+    // const bisaAbsen = sekarang.isAfter(momentBisaAbsen)
+
+    // if (telahHadir) {
+    //   res.status(400).json({ message: "You have been attend two times today" })
+    // }
+
+    // if (!bisaAbsen) {
+    //   res.status(400).json({ message: "Please wait several time", waktuAbsen })
+    // }
+
+    // if (!telahHadir && bisaAbsen) {
+    //   console.log("bisami")
+
+    //   await prisma.rekapitulasi.update({
+    //     where: {
+    //       id: cekAbsen.id,
+    //     },
+    //     data: {
+    //       waktu_pulang: waktu,
+    //       kehadiran: "Hadir",
+    //     },
+    //   })
+
+    //   res.status(200).end()
+    // }
   }
 
   if (pengguna && adaIzin && !cekAbsen) {
@@ -183,7 +210,7 @@ apiController.izin = async (req, res) => {
   })
 
   if (!pengguna) {
-    res.status(401).json({ error: "Wrong Personal Code" })
+    res.status(401).json({ message: "Wrong Personal Code" })
   }
 
   const cekIzin = await prisma.perizinan.findFirst({
