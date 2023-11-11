@@ -21,7 +21,7 @@ apiController.login = async (req, res) => {
 
   if (pengguna) {
     const infoPengguna = {
-      nama: pengguna.namaPengguna,
+      nama: pengguna.nama,
       asal: pengguna.namaAsal,
       jenis_kelamin: pengguna.jenis_kelamin,
       code,
