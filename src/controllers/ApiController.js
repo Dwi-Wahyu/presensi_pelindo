@@ -89,6 +89,7 @@ apiController.presensi = async (req, res) => {
   }
 
   if (pengguna && !adaIzin && cekAbsen) {
+    const { waktu_datang, waktu_pulang } = cekAbsen
     const telahHadir = waktu_datang != "-" && waktu_pulang != "-"
 
     if (telahHadir) {
