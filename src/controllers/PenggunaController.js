@@ -9,29 +9,54 @@ const prisma = new PrismaClient()
 
 const PenggunaController = {}
 
-PenggunaController.inputPenggunaPage = async (req, res) => {
-  console.log(req.params.tipe)
-}
-
 PenggunaController.inputPengguna = async (req, res) => {
   const { nama, namaAsal, jenis_kelamin, status } = req.body
 
   const kode_unik = generateKodeUnik()
 
-  try {
-    await prisma.pengguna.create({
-      data: {
-        nama,
+  const pasanganTerakhir = await prisma.pengguna.findFirst({
+    where: {
+      namaAsal,
+    },
+    orderBy: {
+      pasangan: "desc",
+    },
+  })
+
+  if (pasanganTerakhir) {
+    const jumlahPasangan = await prisma.pengguna.count({
+      where: {
+        pasangan: pasanganTerakhir.pasangan,
         namaAsal,
-        jenis_kelamin,
-        kode_unik,
-        status,
       },
     })
 
-    res.status(200).end()
-  } catch (error) {
-    res.status(400).end()
+    if (jumlahPasangan === 2) {
+      createPengguna(pasanganTerakhir.pasangan + 1)
+    } else {
+      createPengguna(pasanganTerakhir.pasangan)
+    }
+  } else {
+    createPengguna(1)
+  }
+
+  async function createPengguna(pasangan) {
+    try {
+      await prisma.pengguna.create({
+        data: {
+          nama,
+          namaAsal,
+          jenis_kelamin,
+          kode_unik,
+          status,
+          pasangan,
+        },
+      })
+      res.status(200).end()
+    } catch (error) {
+      console.log(error)
+      res.status(400).end()
+    }
   }
 }
 

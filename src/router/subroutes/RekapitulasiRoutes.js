@@ -3,13 +3,14 @@ const Router = require("express").Router
 const {
   rekapitulasiPKL,
   rekapitulasiMagang,
-  cetakRekapitulasiMagang,
   daftarIzin,
   approveIzin,
   tolakIzin,
   editRekapitulasi,
   updateRekapitulasi,
   cetakRekapitulasi,
+  lihatIzin,
+  cetak,
 } = require("../../controllers/RekapitulasiController")
 
 const rekapitulasiRoutes = Router()
@@ -35,10 +36,14 @@ rekapitulasiRoutes.get("/pkl/cetak/:id", cetakRekapitulasi)
 rekapitulasiRoutes.get("/magang/cetak/:id", cetakRekapitulasi)
 
 rekapitulasiRoutes.get("/izin", (req, res) => {
-  res.render("admin/rekapitulasi/izin")
+  res.render("admin/rekapitulasi/izin/daftar")
 })
 
-rekapitulasiRoutes.get("/izin/data", daftarIzin)
+rekapitulasiRoutes.get("/izin-data", daftarIzin)
+
+rekapitulasiRoutes.get("/izin/:id", lihatIzin)
+
+rekapitulasiRoutes.get("/cetak/:id/:nomor", cetak)
 
 rekapitulasiRoutes.post("/izin/approve", approveIzin)
 

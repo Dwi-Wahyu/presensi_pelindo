@@ -1,7 +1,7 @@
-const moment = require("moment")
+const angka = 1
 
-const waktu = "17:51"
-
-const waktu_datang = moment(waktu, "HH:mm")
-
-console.log(waktu_datang.format("HH:mm"))
+if (angka % 2 === 0) {
+  console.log("genap")
+} else {
+  console.log("ganjil")
+}

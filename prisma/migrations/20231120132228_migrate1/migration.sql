@@ -7,6 +7,7 @@ CREATE TABLE "perizinan" (
     "keterangan" TEXT NOT NULL,
     "waktu_izin" TEXT NOT NULL,
     "status" TEXT NOT NULL,
+    "bukti" TEXT,
 
     CONSTRAINT "perizinan_pkey" PRIMARY KEY ("id")
 );

@@ -3,7 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <meta name="description" content="" />
     <meta name="author" content="" />
 
@@ -22,10 +25,16 @@
 
     <!-- Datatable -->
     <link rel="stylesheet" href="/src/assets/vendor/datatable/bootstrap.css" />
-    <link rel="stylesheet" href="/src/assets/vendor/datatable/dataTables.bootstrap4.min.css" />
+    <link
+      rel="stylesheet"
+      href="/src/assets/vendor/datatable/dataTables.bootstrap4.min.css"
+    />
 
     <!-- Vendor Bootstrap  -->
-    <link rel="stylesheet" href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css" />
+    <link
+      rel="stylesheet"
+      href="/src/assets/vendor/bootstrap-icons/bootstrap-icons.css"
+    />
 
     <!-- Custom styles for this template-->
     <link href="/src/assets/css/sb-admin-2.min.css" rel="stylesheet" />
@@ -34,7 +43,8 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-      <%- include('../../partials/sidebarAdmin', { link: 'izin', parent: 'rekapitulasi'}) %>
+      <%- include('../../../partials/sidebarAdmin', { link: 'izin', parent:
+      'rekapitulasi'}) %>
       <!-- End of Sidebar -->
 
       <!-- Content Wrapper -->
@@ -42,13 +52,15 @@
         <!-- Main Content -->
         <div id="content">
           <!-- Topbar -->
-          <%- include('../../partials/topbar') %>
+          <%- include('../../../partials/topbar') %>
           <!-- End of Topbar -->
 
           <!-- Begin Page Content -->
           <div class="container-fluid">
             <!-- Page Heading -->
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
               <h1 class="h3 mb-0 text-gray-800">Daftar Pengajuan Izin</h1>
             </div>
 
@@ -62,7 +74,12 @@
                     <div class="row mb-3">
                       <div class="col">
                         <label for="filter-tanggal">Filter Tanggal</label>
-                        <input type="date" name="" id="filter-tanggal" class="form-control" />
+                        <input
+                          type="date"
+                          name=""
+                          id="filter-tanggal"
+                          class="form-control"
+                        />
                       </div>
                     </div>
                     <table
@@ -127,7 +144,7 @@
         processing: true,
         serverSide: true,
         ajax: {
-          url: "/admin/rekapitulasi/izin/data",
+          url: "/admin/rekapitulasi/izin-data",
           type: "GET",
         },
         columns: [
@@ -142,13 +159,15 @@
               return `
                 <button class='btn btn-success approvebtn'>
                   <i class="bi bi-check"></i>
-                  Approve
                 </button>
       
                 <button class='btn btn-danger tolakbtn'>
                   <i class="bi bi-x"></i>
-                  Tolak
                 </button>
+
+                <a href='/admin/rekapitulasi/izin/${data}' class='btn btn-primary'>
+                  <i class="bi bi-eye"></i>
+                </a>
               `
             },
           },
@@ -193,24 +212,6 @@
           row.draw()
         })
       })
-
-      // const sekarang = new Date()
-      // const tahun = sekarang.getFullYear()
-      // const bulan = sekarang.getMonth() + 1
-      // const tanggal = sekarang.getDate()
-
-      // const stringBulan = bulan.toString().padStart(2, "0")
-      // const stringTanggal = tanggal.toString().padStart(2, "0")
-
-      // const formattedDate = `${tahun}-${stringBulan}-${stringTanggal}`
-
-      // $(document).ready(function () {
-      //   $("#filter-tanggal").val(formattedDate)
-
-      //   const tanggal = $("#filter-tanggal").val()
-
-      //   table.search(tanggal).draw()
-      // })
 
       $("#filter-tanggal").on("change", function () {
         const tanggal = $(this).val()

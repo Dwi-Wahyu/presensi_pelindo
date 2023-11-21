@@ -9,13 +9,14 @@ datasource db {
 }
 
 model perizinan {
-  id         String @id @default(uuid())
+  id         String  @id @default(uuid())
   nama       String
   kode_unik  Int
   tanggal    String
   keterangan String
   waktu_izin String
   status     String
+  bukti      String?
 }
 
 model pengguna {
@@ -27,6 +28,7 @@ model pengguna {
   rekapitulasi  rekapitulasi[]
   asal          asal?          @relation(fields: [namaAsal], references: [nama])
   namaAsal      String?
+  pasangan      Int
 }
 
 model rekapitulasi {

@@ -11,6 +11,9 @@ const { getDaysInMonth } = require("../functions/date")
 const supabase = require("../utils/supabase")
 const prisma = new PrismaClient()
 const moment = require("moment")
+const { getDays, getDaysName } = require("../functions/calendar")
+
+moment.locale("id")
 
 const RekapitulasiController = {}
 
@@ -59,8 +62,8 @@ RekapitulasiController.rekapitulasiPKL = async (req, res) => {
     .like("namaPengguna", `%${nama}%`)
     .range(startAt, stopAt)
 
-  const recordsTotal = total.length
-  const recordsFiltered = filtered.length
+  const recordsTotal = total?.length ?? 0
+  const recordsFiltered = filtered?.length ?? 0
 
   const row = {
     draw,
@@ -286,6 +289,16 @@ RekapitulasiController.daftarIzin = async (req, res) => {
   res.json(row)
 }
 
+RekapitulasiController.lihatIzin = async (req, res) => {
+  const izin = await prisma.perizinan.findUnique({
+    where: {
+      id: req.params.id,
+    },
+  })
+
+  res.render("admin/rekapitulasi/izin/lihat", { izin })
+}
+
 RekapitulasiController.approveIzin = async (req, res) => {
   const { id, nama: namaPengguna, tanggal, waktu_izin } = req.body
 
@@ -361,6 +374,85 @@ RekapitulasiController.tolakIzin = async (req, res) => {
   })
 
   res.status(200).end()
+}
+
+RekapitulasiController.cetak = async (req, res) => {
+  const date = new Date()
+
+  const { nomor, id } = req.params
+
+  const asal = await prisma.asal.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      pengguna: true,
+    },
+  })
+
+  const bulan = moment().format("MMMM")
+
+  const daysInMonth = getDays(date.getMonth(), date.getFullYear())
+
+  const kelompokPengguna = await prisma.pengguna.findMany({
+    where: {
+      namaAsal: asal.nama,
+      pasangan: parseInt(nomor),
+    },
+  })
+
+  const sendiri = kelompokPengguna.length == 1
+
+  const presensiMerged = await getPresensi()
+
+  res.render("admin/rekapitulasi/cetak", {
+    bulan,
+    asal,
+    nomor,
+    sendiri,
+    daysInMonth,
+    presensiMerged,
+    kelompokPengguna,
+  })
+
+  async function getPresensi() {
+    const presensiMerged = []
+
+    for (const pengguna of kelompokPengguna) {
+      const presensiPerbulan = []
+
+      for (const item of daysInMonth) {
+        const presensiPerorang = await prisma.rekapitulasi.findFirst({
+          where: {
+            namaPengguna: pengguna.nama,
+            tanggal: item.tanggal,
+          },
+        })
+
+        if (!presensiPerorang) {
+          presensiPerbulan.push({
+            hari: item.hari,
+            tanggal: item.tanggal,
+            waktu_datang: "-",
+            waktu_pulang: "-",
+          })
+        } else {
+          const { waktu_datang, waktu_pulang } = presensiPerorang
+
+          presensiPerbulan.push({
+            hari: item.hari,
+            tanggal: item.tanggal,
+            waktu_datang,
+            waktu_pulang,
+          })
+        }
+      }
+
+      presensiMerged.push(presensiPerbulan)
+    }
+
+    return presensiMerged
+  }
 }
 
 module.exports = RekapitulasiController
