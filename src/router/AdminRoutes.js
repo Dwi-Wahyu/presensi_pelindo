@@ -2,17 +2,25 @@ const siswaRoutes = require("./subroutes/SiswaRoutes")
 const mahasiswaRoutes = require("./subroutes/MahasiswaRoutes")
 const rekapitulasiRoutes = require("./subroutes/RekapitulasiRoutes")
 const settingsRoutes = require("./subroutes/SettingsRoutes")
+const {
+  getJumlahSiswa,
+  getJumlahMahasiswa,
+  getJumlahIzin,
+} = require("../controllers/DashboardController")
 
 const Router = require("express").Router
 
 const adminRoutes = Router()
 
-adminRoutes.get("/", (req, res) => {
-  res.render("admin/dashboard")
+adminRoutes.get("/", async (req, res) => {
+  const jumlahSiswa = await getJumlahSiswa()
+  const jumlahMahasiswa = await getJumlahMahasiswa()
+  const jumlahIzin = await getJumlahIzin()
+
+  res.render("admin/dashboard", { jumlahSiswa, jumlahMahasiswa, jumlahIzin })
 })
 
 adminRoutes.use("/siswa", siswaRoutes)
-
 
 adminRoutes.use("/mahasiswa", mahasiswaRoutes)
 

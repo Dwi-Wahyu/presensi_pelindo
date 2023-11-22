@@ -247,7 +247,7 @@ RekapitulasiController.updateRekapitulasi = async (req, res) => {
   }
 
   async function updateRekap(kehadiran) {
-    const update = await prisma.rekapitulasi.update({
+    await prisma.rekapitulasi.update({
       where: {
         id,
       },
@@ -257,8 +257,6 @@ RekapitulasiController.updateRekapitulasi = async (req, res) => {
         kehadiran,
       },
     })
-
-    log(update)
 
     res.status(200).json({ message: "Berhasil update rekapitulasi" })
   }
