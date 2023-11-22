@@ -142,44 +142,126 @@ RekapitulasiController.editRekapitulasi = async (req, res) => {
     },
   })
 
-  res.render("admin/rekapitulasi/siswa/edit", { rekapitulasi })
+  const { waktu_datang, waktu_pulang } = rekapitulasi
+
+  let jenisKeterangan
+  let waktuKeterangan
+
+  const adaKeteranganDatang = waktu_datang == "sakit" || waktu_datang == "izin"
+  const adaKeteranganPulang = waktu_pulang == "sakit" || waktu_pulang == "izin"
+  const adaKeterangan = adaKeteranganDatang || adaKeteranganPulang
+
+  if (adaKeteranganDatang && !adaKeteranganPulang) {
+    waktuKeterangan = "datang"
+  }
+
+  if (adaKeteranganPulang && !adaKeteranganDatang) {
+    waktuKeterangan = "pulang"
+  }
+
+  if (adaKeteranganDatang && adaKeteranganPulang) {
+    waktuKeterangan = "seharian"
+  }
+
+  const keteranganIzin = waktu_datang == "izin" || waktu_pulang == "izin"
+  const keteranganSakit = waktu_datang == "sakit" || waktu_pulang == "sakit"
+
+  if (keteranganIzin && !keteranganSakit) {
+    jenisKeterangan = "izin"
+  }
+
+  if (keteranganSakit && !keteranganIzin) {
+    jenisKeterangan = "sakit"
+  }
+
+  res.render("admin/rekapitulasi/siswa/edit", {
+    rekapitulasi,
+    waktuKeterangan,
+    jenisKeterangan,
+    adaKeterangan,
+  })
 }
 
 RekapitulasiController.updateRekapitulasi = async (req, res) => {
   const { id } = req.params
-  let { waktu_datang, waktu_pulang } = req.body
-
-  let kehadiran = "Hadir"
+  let { waktu_datang, waktu_pulang, keterangan, waktu_izin } = req.body
 
   const kosong_datang = waktu_datang == ""
   const kosong_pulang = waktu_pulang == ""
 
-  if (kosong_datang) {
-    waktu_datang = "-"
-    kehadiran = "Tidak Hadir"
+  const hapusAbsen = kosong_datang && kosong_pulang
+
+  if (hapusAbsen && keterangan == "") {
+    await prisma.rekapitulasi.delete({
+      where: {
+        id,
+      },
+    })
+
+    res.status(200).json({ message: "Berhasil hapus rekapitulasi" })
   }
 
-  if (kosong_pulang) {
-    waktu_pulang = "-"
-    kehadiran = "Tidak Hadir"
+  if (keterangan == "" && !hapusAbsen) {
+    let kehadiran = "Hadir"
+
+    if (kosong_datang) {
+      waktu_datang = "-"
+      kehadiran = "Tidak Hadir"
+
+      updateRekap(kehadiran)
+    }
+
+    if (kosong_pulang) {
+      waktu_pulang = "-"
+      kehadiran = "Tidak Hadir"
+
+      updateRekap(kehadiran)
+    }
+
+    if (!kosong_datang && !kosong_pulang) {
+      kehadiran = "Hadir"
+
+      updateRekap(kehadiran)
+    }
   }
 
-  if (!kosong_datang && !kosong_pulang) {
-    kehadiran = "Hadir"
+  if (keterangan != "" && hapusAbsen) {
+    if (waktu_izin == "datang") {
+      waktu_datang = keterangan
+
+      updateRekap("Hadir")
+    }
+
+    if (waktu_izin == "pulang") {
+      waktu_pulang = keterangan
+
+      updateRekap("Hadir")
+    }
+
+    if (waktu_izin == "seharian") {
+      waktu_datang = keterangan
+      waktu_pulang = keterangan
+
+      updateRekap(keterangan)
+    }
   }
 
-  const updateRekap = await prisma.rekapitulasi.update({
-    where: {
-      id,
-    },
-    data: {
-      waktu_datang,
-      waktu_pulang,
-      kehadiran,
-    },
-  })
+  async function updateRekap(kehadiran) {
+    const update = await prisma.rekapitulasi.update({
+      where: {
+        id,
+      },
+      data: {
+        waktu_datang,
+        waktu_pulang,
+        kehadiran,
+      },
+    })
 
-  res.status(200).end()
+    log(update)
+
+    res.status(200).json({ message: "Berhasil update rekapitulasi" })
+  }
 }
 
 RekapitulasiController.cetakRekapitulasi = async (req, res) => {

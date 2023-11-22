@@ -74,7 +74,7 @@
                       role="alert"
                     >
                       <i class="fa fa-check-circle mr-1"></i>
-                      Berhasil edit rekapitulasi
+                      <span id="alert-msg"></span>
                       <button
                         type="button"
                         class="close"
@@ -113,47 +113,102 @@
                         <label for="waktu_datang" class="form-label"
                           >Waktu Datang</label
                         >
-                        <% if (waktu_datang == "-") { %>
                         <div class="input-group">
+                          <% if (waktuKeterangan == "datang") { %>
                           <input
                             type="time"
                             id="waktu_datang"
                             class="form-control"
+                            disabled
                           />
-                        </div>
-                        <% } else { %>
-                        <div class="input-group">
+                          <% } else { %>
                           <input
                             type="time"
                             id="waktu_datang"
                             class="form-control"
                             value="<%= rekapitulasi.waktu_datang %>"
                           />
+                          <% } %>
                         </div>
-                        <% } %>
                       </div>
                       <div class="mb-3">
                         <label for="waktu_pulang" class="form-label"
                           >Waktu Pulang</label
                         >
-                        <% if (waktu_pulang == "-") { %>
-                        <div class="input-group">
-                          <input
-                            type="time"
-                            id="waktu_pulang"
-                            class="form-control"
-                          />
-                        </div>
+                        <% if (waktuKeterangan == "pulang") { %>
+                        <input
+                          type="time"
+                          id="waktu_pulang"
+                          class="form-control"
+                          disabled
+                        />
                         <% } else { %>
-                        <div class="input-group">
-                          <input
-                            type="time"
-                            id="waktu_pulang"
-                            class="form-control"
-                            value="<%= rekapitulasi.waktu_pulang %>"
-                          />
-                        </div>
+                        <input
+                          type="time"
+                          id="waktu_pulang"
+                          class="form-control"
+                          value="<%= rekapitulasi.waktu_pulang %>"
+                        />
                         <% } %>
+                        <div class="mt-3">
+                          <label for="keterangan">Keterangan (opsional)</label>
+                          <select id="keterangan" class="form-control">
+                            <option selected value="">
+                              -- Pilih Keterangan --
+                            </option>
+                            <% if (jenisKeterangan == "sakit") { %>
+                            <option value="sakit" selected>Sakit</option>
+                            <% } else { %>
+                            <option value="sakit">Sakit</option>
+                            <% } %>
+                            <!--  -->
+                            <% if (jenisKeterangan == "izin") { %>
+                            <option value="izin" selected>Izin</option>
+                            <% } else { %>
+                            <option value="izin">Izin</option>
+                            <% } %>
+                          </select>
+                        </div>
+                        <div class="mt-3">
+                          <label for="waktu_izin">Waktu Izin</label>
+                          <% if (adaKeterangan) { %>
+                          <select id="waktu_izin" class="form-control">
+                            <option value="" selected disabled>
+                              -- Pilih Waktu Izin --
+                            </option>
+                            <% if (waktuKeterangan == "datang") { %>
+                            <option value="datang" selected>
+                              Absen Datang
+                            </option>
+                            <% } else { %>
+                            <option value="datang">Absen Datang</option>
+                            <% } %>
+                            <!--  -->
+                            <% if (waktuKeterangan == "pulang") { %>
+                            <option value="pulang" selected>
+                              Absen Pulang
+                            </option>
+                            <% } else { %>
+                            <option value="pulang">Absen Pulang</option>
+                            <% } %>
+                            <!--  -->
+                            <% if (waktuKeterangan == "seharian") { %>
+                            <option value="seharian" selected>Seharian</option>
+                            <% } else { %>
+                            <option value="seharian">Seharian</option>
+                            <% } %>
+                          </select>
+                          <% } else { %>
+                          <select id="waktu_izin" class="form-control" disabled>
+                            <option value="" selected disabled>
+                              -- Pilih Waktu Izin --
+                            </option>
+                            <option value="datang">Absen Datang</option>
+                            <option value="pulang">Absen Pulang</option>
+                            <option value="seharian">Seharian</option>
+                          </select>
+                          <% } %>
+                        </div>
                       </div>
                       <div class="d-flex justify-content-end">
                         <a
@@ -215,13 +270,55 @@
     <script src="/src/assets/js/sb-admin-2.min.js"></script>
 
     <script>
+      $("#keterangan").on("change", function () {
+        const keterangan = $(this).val()
+
+        $("#waktu_izin").val("")
+
+        if (keterangan != "") {
+          $("#waktu_izin").prop("disabled", false)
+        } else {
+          $("#waktu_izin").prop("disabled", true)
+        }
+
+        $("#waktu_datang").prop("disabled", false)
+        $("#waktu_pulang").prop("disabled", false)
+      })
+
+      $("#waktu_izin").on("change", function () {
+        const waktu_izin = $(this).val()
+
+        if (waktu_izin == "datang") {
+          $("#waktu_datang").prop("disabled", true)
+          $("#waktu_datang").val("")
+        } else {
+          $("#waktu_datang").prop("disabled", false)
+        }
+
+        if (waktu_izin == "pulang") {
+          $("#waktu_pulang").prop("disabled", true)
+          $("#waktu_pulang").val("")
+        } else {
+          $("#waktu_pulang").prop("disabled", false)
+        }
+
+        if (waktu_izin == "seharian") {
+          $("#waktu_datang").prop("disabled", true)
+          $("#waktu_pulang").prop("disabled", true)
+          $("#waktu_datang").val("")
+          $("#waktu_pulang").val("")
+        }
+      })
+
       $("#form").on("submit", (e) => {
         e.preventDefault()
 
         const waktu_datang = $("#waktu_datang").val()
         const waktu_pulang = $("#waktu_pulang").val()
+        const keterangan = $("#keterangan").val()
+        const waktu_izin = $("#waktu_izin").val()
 
-        const data = { waktu_datang, waktu_pulang }
+        const data = { waktu_datang, waktu_pulang, keterangan, waktu_izin }
 
         $("#success-alert").addClass("d-none")
 
@@ -231,9 +328,17 @@
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
-        }).then((result) => {
+        }).then(async (result) => {
           if (result.ok) {
-            $("#success-alert").removeClass("d-none")
+            const data = await result.json()
+
+            if (data.message == "Berhasil hapus rekapitulasi") {
+              history.back()
+            } else {
+              $("#success-alert").removeClass("d-none")
+
+              $("#alert-msg").text(data.message)
+            }
           }
         })
       })
