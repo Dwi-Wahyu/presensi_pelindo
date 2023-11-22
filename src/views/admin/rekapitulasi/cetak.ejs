@@ -158,7 +158,7 @@
                           <% const splitTanggal = calendar.tanggal.split("-") %>
                           <td><%= splitTanggal[2] %></td>
                           <% if (calendar.hari == "Sabtu" || calendar.hari == "Minggu") { %>
-                            <td class="text-center" colspan="4"><%= calendar.hari %></td>
+                            <td class="text-center bg-gray-200" colspan="4"><%= calendar.hari %></td>
                           <% } else { %>
                             <% for (const item of presensiMerged) { %>
                               <td class="text-center"><%= item[idx].waktu_datang %></td>

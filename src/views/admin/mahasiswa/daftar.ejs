@@ -38,7 +38,6 @@
 
     <!-- Custom styles for this template-->
     <link href="/src/assets/css/sb-admin-2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="/src/assets/css/component.css" />
   </head>
 
   <body id="page-top">
@@ -81,9 +80,10 @@
                       <thead>
                         <tr>
                           <th>Nama</th>
-                          <th>Asal Sekolah</th>
+                          <th>Asal Kampus</th>
                           <th>Jenis Kelamin</th>
                           <th>Kode</th>
+                          <th>Pasangan</th>
                           <th>Action</th>
                         </tr>
                       </thead>
@@ -131,12 +131,13 @@
           { data: "namaAsal", title: "Asal Kampus" },
           { data: "jenis_kelamin", title: "Jenis Kelamin" },
           { data: "kode_unik", title: "Kode" },
+          { data: "pasangan", title: "Pasangan" },
           {
             data: "id",
             title: "Action",
             render: function (data, row, type) {
               return `
-                <a href='/admin/mahasiswa/edit/${data}' class='btn btn-primary'>
+                <a href='/admin/siswa/edit/${data}' class='btn btn-primary'>
                   <i class='bi bi-pencil-square'></i>
                 </a>
               `
