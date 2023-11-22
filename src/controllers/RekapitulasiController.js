@@ -100,7 +100,7 @@ RekapitulasiController.rekapitulasiMagang = async (req, res) => {
   const startAt = parseInt(start)
   const stopAt = parseInt(length)
 
-  const { data: total } = await supabase
+  const { data: total, error } = await supabase
     .from("rekapitulasi")
     .select()
     .eq("status", "magang")
@@ -401,15 +401,12 @@ RekapitulasiController.cetak = async (req, res) => {
     },
   })
 
-  const sendiri = kelompokPengguna.length == 1
-
   const presensiMerged = await getPresensi()
 
   res.render("admin/rekapitulasi/cetak", {
     bulan,
     asal,
     nomor,
-    sendiri,
     daysInMonth,
     presensiMerged,
     kelompokPengguna,

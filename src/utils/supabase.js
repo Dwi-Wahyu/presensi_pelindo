@@ -1,7 +1,7 @@
 const { createClient } = require("@supabase/supabase-js")
 
-const { supabaseKey, supabaseUrl } = process.env
+const { supabasePublicKey, supabaseUrl } = process.env
 
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(supabaseUrl, supabasePublicKey)
 
 module.exports = supabase
