@@ -322,6 +322,10 @@
     <script src="/src/assets/js/sb-admin-2.min.js"></script>
 
     <script>
+      const date = new Date()
+
+      const tanggal = date.toISOString().split("T")[0]
+
       const table = $("#example").DataTable({
         processing: true,
         serverSide: true,
@@ -356,7 +360,7 @@
                   <i class="bi bi-trash"></i>
                   Hapus
                 </button>
-                <a href='/admin/rekapitulasi/cetak/${data.id}/1'
+                <a href='/admin/rekapitulasi/cetak/${data.id}/1/${tanggal}'
                   class='btn btn-success'
                 >
                   <i class="bi bi-printer"></i>

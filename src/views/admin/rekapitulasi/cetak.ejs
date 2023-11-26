@@ -107,19 +107,35 @@
                     Cetak
                   </button>
                 </div>
-                <select id="filter-nama" class="form-control">
-                  <% for (const [idx, item] of asal.pengguna.entries()) { %>
-                  <!--  -->
-                  <% if (idx == nomor) { %>
-                  <option selected value="<%= item.pasangan %>">
-                    <%= item.nama %>
-                  </option>
-                  <% } else { %>
-                  <option value="<%= item.pasangan %>"><%= item.nama %></option>
-                  <% } %>
-                  <!--  -->
-                  <% } %>
-                </select>
+                <div class="row">
+                  <div class="col-6">
+                    <label for="filter-nama">Filter Nama</label>
+                    <select id="filter-nama" class="form-control">
+                      <% for (const [idx, item] of asal.pengguna.entries()) { %>
+                      <!--  -->
+                      <% if (idx == nomor) { %>
+                      <option selected value="<%= item.pasangan %>">
+                        <%= item.nama %>
+                      </option>
+                      <% } else { %>
+                      <option value="<%= item.pasangan %>">
+                        <%= item.nama %>
+                      </option>
+                      <% } %>
+                      <!--  -->
+                      <% } %>
+                    </select>
+                  </div>
+                  <div class="col-6">
+                    <label for="filter-tanggal">Filter Tanggal</label>
+                    <input
+                      type="date"
+                      id="filter-tanggal"
+                      class="form-control mb-3"
+                      value="<%= tanggal %>"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <!-- Content Row -->
@@ -131,7 +147,7 @@
                   <div class="card-body" id="content-to-print">
                     <h4 class="text-center">PRESENSI</h4>
                     <h4 class="text-center"><%= asal.nama %></h4>
-                    <h6>Bulan <%= bulan %></h6>
+                    <h6>Bulan <%= bulanTahun %></h6>
                     <table class="table table-bordered mt-1" id="cetak-table">
                       <thead>
                         <tr>
@@ -202,14 +218,21 @@
         window.print()
       }
 
+      $("#filter-tanggal").on("change", function () {
+        const id = $("#filter-nama").val()
+        const tanggal = $(this).val()
+
+        location.href = `/admin/rekapitulasi/cetak/<%= asal.id %>/${id}/${tanggal}`
+      })
+
       $("#filter-nama").on("change", function () {
-        const nama = $(this).find(":selected").text()
         const id = $(this).val()
+        const tanggal = $("#filter-tanggal").val()
 
         const nomor = "<%= nomor %>"
 
         if (nomor != id) {
-          location.href = `/admin/rekapitulasi/cetak/<%= asal.id %>/${id}`
+          location.href = `/admin/rekapitulasi/cetak/<%= asal.id %>/${id}/${tanggal}`
         }
       })
     </script>

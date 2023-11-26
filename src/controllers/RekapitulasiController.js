@@ -459,7 +459,12 @@ RekapitulasiController.tolakIzin = async (req, res) => {
 RekapitulasiController.cetak = async (req, res) => {
   const date = new Date()
 
-  const { nomor, id } = req.params
+  const { nomor, id, tanggal } = req.params
+
+  const splitTanggal = tanggal.split("-")
+
+  const tahun = splitTanggal[0]
+  const bulan = splitTanggal[1]
 
   const asal = await prisma.asal.findFirst({
     where: {
@@ -470,9 +475,11 @@ RekapitulasiController.cetak = async (req, res) => {
     },
   })
 
-  const bulan = moment().format("MMMM")
+  const namaBulan = moment(tanggal, "YYYY-MM-DD").format("MMMM")
 
-  const daysInMonth = getDays(date.getMonth(), date.getFullYear())
+  const bulanTahun = `${namaBulan} ${tahun}`
+
+  const daysInMonth = getDays(bulan - 1, tahun)
 
   const kelompokPengguna = await prisma.pengguna.findMany({
     where: {
@@ -484,10 +491,11 @@ RekapitulasiController.cetak = async (req, res) => {
   const presensiMerged = await getPresensi()
 
   res.render("admin/rekapitulasi/cetak", {
-    bulan,
+    bulanTahun,
     asal,
     nomor,
     daysInMonth,
+    tanggal,
     presensiMerged,
     kelompokPengguna,
   })

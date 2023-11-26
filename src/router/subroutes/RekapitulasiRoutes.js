@@ -43,7 +43,7 @@ rekapitulasiRoutes.get("/izin-data", daftarIzin)
 
 rekapitulasiRoutes.get("/izin/:id", lihatIzin)
 
-rekapitulasiRoutes.get("/cetak/:id/:nomor", cetak)
+rekapitulasiRoutes.get("/cetak/:id/:nomor/:tanggal", cetak)
 
 rekapitulasiRoutes.post("/izin/approve", approveIzin)
 

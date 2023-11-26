@@ -1,13 +1,11 @@
+const loginAuth = require("../middlewares/loginAuth")
+
 const Router = require("express").Router
 
 const pagesRouter = Router()
 
-pagesRouter.get("/login", (req, res) => {
+pagesRouter.get("/", loginAuth, (req, res) => {
   res.render("web/login-admin")
-})
-
-pagesRouter.get("/", (req, res) => {
-  res.render("web/absen")
 })
 
 pagesRouter.get("/wrong-code", (req, res) => {
@@ -71,10 +69,9 @@ pagesRouter.post("/login", (req, res) => {
 })
 
 pagesRouter.get("/logout", (req, res) => {
-  res.redirect("/login")
-
   req.session.destroy((err) => {
     if (err) throw err
+    res.redirect("/")
   })
 })
 
