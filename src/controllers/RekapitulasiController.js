@@ -100,7 +100,7 @@ RekapitulasiController.rekapitulasiMagang = async (req, res) => {
   const startAt = parseInt(start)
   const stopAt = parseInt(length)
 
-  const { data: total, error } = await supabase
+  const { data: total } = await supabase
     .from("rekapitulasi")
     .select()
     .eq("status", "magang")
@@ -446,6 +446,20 @@ RekapitulasiController.approveIzin = async (req, res) => {
 
 RekapitulasiController.tolakIzin = async (req, res) => {
   const { id } = req.body
+
+  const perizinan = await prisma.perizinan.findFirst({
+    where: {
+      id,
+    },
+  })
+
+  if (perizinan.bukti) {
+    const { tanggal, nama } = perizinan
+    const date = moment(tanggal, "YYYY-MM-DD").format("YYYY:MM:DD")
+    const filepath = `${date}_${nama}`
+
+    await supabase.storage.from("bukti_izin").remove(filepath)
+  }
 
   await prisma.perizinan.delete({
     where: {

@@ -5,6 +5,7 @@ const {
   filterQuery,
   pagedQuery,
 } = require("../functions/datatable")
+const supabase = require("../utils/supabase")
 const prisma = new PrismaClient()
 
 const PenggunaController = {}
@@ -150,6 +151,29 @@ PenggunaController.daftarSiswa = async (req, res) => {
     "nama",
     column_sort_order
   )
+
+  // const startAt = parseInt(start)
+  // const stopAt = parseInt(length)
+
+  // const { data: total } = await supabase
+  //   .from("pengguna")
+  //   .select()
+  //   .eq("status", "pkl")
+
+  // const { data: filtered } = await supabase
+  //   .from("pengguna")
+  //   .select()
+  //   .eq("status", "pkl")
+  //   .like("nama", search_value)
+
+  // const { data } = await supabase
+  //   .from("pengguna")
+  //   .select()
+  //   .eq("status", "pkl")
+  //   .like("nama", search_value)
+  //   .range(startAt, stopAt)
+
+  // console.log(filtered)
 
   const row = {
     draw,

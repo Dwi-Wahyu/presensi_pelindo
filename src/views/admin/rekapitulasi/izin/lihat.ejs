@@ -78,13 +78,19 @@
                     </span>
                     <span class="text">Kembali</span>
                   </button>
-                  <button class="btn btn-success btn-icon-split mr-2">
+                  <button
+                    class="btn btn-success btn-icon-split mr-2"
+                    onclick="approve()"
+                  >
                     <span class="icon text-white-50">
                       <i class="bi bi-check-lg"></i>
                     </span>
                     <span class="text">Approve</span>
                   </button>
-                  <button class="btn btn-danger btn-icon-split">
+                  <button
+                    class="btn btn-danger btn-icon-split"
+                    onclick="tolak()"
+                  >
                     <span class="icon text-white-50">
                       <i class="bi bi-x-lg"></i>
                     </span>
@@ -116,5 +122,46 @@
 
     <!-- Custom scripts for all pages-->
     <script src="/src/assets/js/sb-admin-2.min.js"></script>
+
+    <script>
+      async function approve() {
+        const id = "<%= izin.id %>"
+        const nama = "<%= izin.nama %>"
+        const tanggal = "<%= izin.tanggal %>"
+        const waktu_izin = "<%= izin.waktu_izin %>"
+
+        const data = { id, nama, tanggal, waktu_izin }
+
+        console.log(data)
+
+        const fetchApprove = await fetch("/admin/rekapitulasi/izin/approve", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+
+        if (fetchApprove.ok) {
+          location.href = "/admin/rekapitulasi/izin"
+        }
+      }
+
+      async function tolak() {
+        const id = "<%= izin.id %>"
+
+        const fetchTolak = await fetch("/admin/rekapitulasi/izin/tolak", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id }),
+        })
+
+        if (fetchTolak.ok) {
+          location.href = "/admin/rekapitulasi/izin"
+        }
+      }
+    </script>
   </body>
 </html>
